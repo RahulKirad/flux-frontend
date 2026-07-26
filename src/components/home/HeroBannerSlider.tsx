@@ -19,7 +19,7 @@ export default function HeroBannerSlider({ stats = {} }: HeroBannerSliderProps) 
     <section className="relative">
       {/* Video banner + shadow text overlay — extends under transparent navbar */}
       <div className="relative overflow-hidden bg-[#0a1628]">
-        <div className="hero-video-area h-[420px] sm:h-[480px] lg:h-[520px] xl:h-[560px] relative">
+        <div className="hero-video-area relative">
           <div className="absolute inset-0 z-0">
             <video
               autoPlay
@@ -41,20 +41,20 @@ export default function HeroBannerSlider({ stats = {} }: HeroBannerSliderProps) 
         </div>
 
         {/* Transparent shadow patch — overlaps video bottom */}
-        <div className="hero-banner-patch hero-banner-patch--shadow -mt-20 sm:-mt-24 lg:-mt-28">
-          <div className="stitch-container-home py-3 sm:py-4">
+        <div className="hero-banner-patch hero-banner-patch--shadow">
+          <div className="stitch-container-home py-4 sm:py-5 lg:py-6">
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, ease: 'easeOut' }}
-              className="flex flex-col items-center text-center max-w-3xl lg:max-w-4xl mx-auto"
+              className="flex flex-col items-center text-center max-w-3xl xl:max-w-4xl mx-auto w-full min-w-0 px-1"
             >
               <span className="inline-flex items-center gap-2 px-2.5 py-0.5 border border-white/15 bg-white/5 backdrop-blur-sm uppercase tracking-widest text-[10px] sm:text-xs font-semibold mb-2 text-white/85">
                 <span className="w-1.5 h-1.5 bg-white/70 rounded-full animate-pulse" />
                 Precision Engineering
               </span>
 
-              <h1 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold leading-tight tracking-tight mb-2 max-w-full lg:whitespace-nowrap text-white/95">
+              <h1 className="text-[clamp(1.2rem,2.6vw,2.35rem)] font-bold leading-tight tracking-tight mb-2 w-full text-white/95 text-balance">
                 Engineering the{' '}
                 <span className="text-white/70">Future of</span>{' '}
                 <span className="relative inline-block">
@@ -63,7 +63,7 @@ export default function HeroBannerSlider({ stats = {} }: HeroBannerSliderProps) 
                 </span>
               </h1>
 
-              <p className="text-xs sm:text-sm lg:text-base text-white/65 mb-3 sm:mb-4 max-w-2xl xl:max-w-3xl mx-auto leading-snug line-clamp-2 sm:line-clamp-none">
+              <p className="text-xs sm:text-sm lg:text-[clamp(0.8rem,1.2vw,1rem)] text-white/65 mb-3 sm:mb-4 max-w-2xl xl:max-w-3xl mx-auto leading-relaxed text-pretty">
                 Integrated engineering design, composites, prototyping, and tools & die for bus body
                 and railway parts manufacturing — from concept to series production.
               </p>

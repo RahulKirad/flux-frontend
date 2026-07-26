@@ -64,7 +64,7 @@ export default function Header() {
 
   return (
     <header
-      className={`z-50 transition-all duration-300 ${
+      className={`w-full z-50 transition-all duration-300 ${
         isHome
           ? `fixed top-0 left-0 right-0 border-b ${
               scrolled
@@ -76,13 +76,13 @@ export default function Header() {
             }`
       }`}
     >
-      <div className="stitch-container-home">
-        <div className="flex items-center justify-between h-16 lg:h-[4.5rem] gap-4">
-          <Link to="/" className="flex items-center shrink-0">
-            <FluxLogo className="h-10 lg:h-11 w-auto" />
+      <div className="stitch-container-home min-w-0">
+        <div className="flex items-center justify-between h-16 lg:h-[4.5rem] gap-2 lg:gap-3 xl:gap-4 min-w-0">
+          <Link to="/" className="flex items-center shrink-0 min-w-0">
+            <FluxLogo className="h-9 sm:h-10 lg:h-10 xl:h-11 w-auto max-w-[140px] sm:max-w-none" />
           </Link>
 
-          <nav className="hidden lg:flex items-center gap-5 xl:gap-7 flex-1 justify-center whitespace-nowrap">
+          <nav className="hidden lg:flex items-center gap-2 lg:gap-3 xl:gap-5 2xl:gap-7 flex-1 justify-center min-w-0 overflow-visible">
             {navLinks.map((link) => (
               <div key={link.path} className="relative shrink-0">
                 {link.children ? (
@@ -91,7 +91,7 @@ export default function Header() {
                     aria-expanded={dropdownOpen === link.label}
                     aria-haspopup="true"
                     onClick={() => toggleDropdown(link.label)}
-                    className={`text-xs xl:text-sm uppercase tracking-widest transition-colors duration-300 kinetic-border pb-1 flex items-center gap-1 ${
+                    className={`text-[10px] lg:text-[11px] xl:text-xs uppercase tracking-[0.12em] xl:tracking-widest transition-colors duration-300 kinetic-border pb-1 flex items-center gap-1 shrink-0 ${
                       isHome
                         ? homeNavClass(isLinkActive(link.path))
                         : defaultNavClass(isLinkActive(link.path))
@@ -108,7 +108,7 @@ export default function Header() {
                     to={link.path}
                     end={link.path === '/'}
                     className={({ isActive }) =>
-                      `text-xs xl:text-sm uppercase tracking-widest transition-colors duration-300 kinetic-border pb-1 flex items-center gap-1 ${
+                      `text-[10px] lg:text-[11px] xl:text-xs uppercase tracking-[0.12em] xl:tracking-widest transition-colors duration-300 kinetic-border pb-1 flex items-center gap-1 shrink-0 ${
                         isHome ? homeNavClass(isActive) : defaultNavClass(isActive)
                       }`
                     }
@@ -146,7 +146,7 @@ export default function Header() {
 
           <Link
             to="/contact"
-            className={`hidden lg:inline-flex shrink-0 !px-5 !py-2.5 text-xs ${
+            className={`hidden lg:inline-flex shrink-0 !px-3 !py-2 lg:!px-4 xl:!px-5 !py-2.5 text-[10px] lg:text-[11px] xl:text-xs whitespace-nowrap ${
               isHome
                 ? 'stitch-btn-ghost !border-white/25 !bg-white/5 !backdrop-blur-sm hover:!bg-white/12'
                 : 'stitch-btn-primary'

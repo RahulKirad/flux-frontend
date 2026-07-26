@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import { AnimatedSection, SEOHead, SectionHeading } from '../components/common';
 import HeroBannerSlider from '../components/home/HeroBannerSlider';
-import { railwaysImage, electricVehiclesImage, toolsDieImage } from '../assets/images';
+import { railwaysImage, electricVehiclesImage } from '../assets/images';
 import ImageTextBannerSlider from '../components/home/ImageTextBannerSlider';
 import ContactForm from '../components/forms/ContactForm';
 import { BulletList, ImageTextBlock, PageSection, StatStrip } from '../components/layout/ContentBlocks';
@@ -37,24 +37,24 @@ const bentoIndustries = [
     slug: 'automotive',
     description: 'Passenger vehicles, EV platforms, and construction equipment components.',
     image: 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1200&q=80',
-    span: 'md:col-span-8',
-    height: 'h-[300px] lg:h-[380px]',
+    span: 'md:col-span-12 lg:col-span-8',
+    height: 'min-h-[240px] sm:min-h-[280px] lg:min-h-[320px] xl:min-h-[380px]',
   },
   {
     title: 'Commercial Vehicles',
     slug: 'commercial-vehicles',
     description: 'Bus body manufacturing and fleet lightweighting at scale.',
     image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&q=80',
-    span: 'md:col-span-4',
-    height: 'h-[300px] lg:h-[380px]',
+    span: 'md:col-span-12 lg:col-span-4',
+    height: 'min-h-[240px] sm:min-h-[280px] lg:min-h-[320px] xl:min-h-[380px]',
   },
   {
     title: 'Electric Vehicles',
     slug: 'electric-vehicles',
     description: 'EV platform design and lightweighting solutions.',
     image: electricVehiclesImage,
-    span: 'md:col-span-4 md:row-span-2',
-    height: 'h-[300px] lg:h-full lg:min-h-[520px]',
+    span: 'md:col-span-6 lg:col-span-4 xl:col-span-4 bento-row-span-2',
+    height: 'min-h-[240px] sm:min-h-[280px] lg:min-h-[300px] xl:min-h-[520px]',
     imageClass: 'object-cover object-center',
   },
   {
@@ -62,17 +62,17 @@ const bentoIndustries = [
     slug: 'railways',
     description: 'RDSO-certified railway component manufacturing.',
     image: railwaysImage,
-    span: 'md:col-span-8',
-    height: 'h-[280px] lg:h-[400px]',
+    span: 'md:col-span-6 lg:col-span-8',
+    height: 'min-h-[240px] sm:min-h-[280px] lg:min-h-[320px] xl:min-h-[400px]',
     imageClass: 'object-cover object-center',
   },
   {
     title: 'Industrial Equipment',
     slug: 'industrial-equipment',
     description: 'Heavy machinery and industrial component engineering.',
-    image: toolsDieImage,
-    span: 'md:col-span-8',
-    height: 'h-[280px] lg:h-[360px]',
+    image: 'https://images.unsplash.com/photo-1565793300263-d78378306091?w=1200&q=80',
+    span: 'md:col-span-12 lg:col-span-8',
+    height: 'min-h-[240px] sm:min-h-[280px] lg:min-h-[320px] xl:min-h-[360px]',
     imageClass: 'object-cover object-center',
   },
   {
@@ -80,16 +80,16 @@ const bentoIndustries = [
     slug: 'material-handling',
     description: 'Conveyor, crane, and handling system components.',
     image: 'https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=800&q=80',
-    span: 'md:col-span-5',
-    height: 'h-[260px] lg:h-[320px]',
+    span: 'md:col-span-6 lg:col-span-5',
+    height: 'min-h-[220px] sm:min-h-[260px] lg:min-h-[280px] xl:min-h-[320px]',
   },
   {
     title: 'Packaging Systems',
     slug: 'packaging-systems',
     description: 'Automated packaging machinery components.',
     image: 'https://images.unsplash.com/photo-1581092918056-0c4c3acd3789?w=800&q=80',
-    span: 'md:col-span-7',
-    height: 'h-[260px] lg:h-[320px]',
+    span: 'md:col-span-6 lg:col-span-7',
+    height: 'min-h-[220px] sm:min-h-[260px] lg:min-h-[280px] xl:min-h-[320px]',
   },
 ];
 
@@ -129,7 +129,7 @@ export default function HomePage() {
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <AnimatedSection>
               <span className="stitch-label block mb-4">About Flux Corp</span>
-              <h2 className="text-3xl lg:text-5xl font-bold text-kinetic-primary leading-none uppercase mb-6">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-kinetic-primary leading-tight uppercase mb-6 text-balance">
                 Integrated Engineering
                 <br />
                 Solutions.
@@ -144,7 +144,7 @@ export default function HomePage() {
               </Link>
             </AnimatedSection>
             <AnimatedSection delay={0.15}>
-              <div className="relative h-[360px] lg:h-[480px] border border-kinetic-outline-variant overflow-hidden">
+              <div className="relative min-h-[280px] sm:min-h-[320px] lg:min-h-[400px] xl:min-h-[480px] border border-kinetic-outline-variant overflow-hidden">
                 <img
                   src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1000&q=80"
                   alt="Flux Corp engineering facility"
@@ -163,7 +163,7 @@ export default function HomePage() {
           <div className="flex flex-col md:flex-row justify-between items-end mb-12 lg:mb-16 gap-8">
             <div className="max-w-2xl">
               <span className="stitch-label block mb-4">Products & Services</span>
-              <h2 className="text-3xl lg:text-5xl font-bold text-kinetic-primary leading-none uppercase">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-kinetic-primary leading-tight uppercase text-balance">
                 End-to-End
                 <br />
                 Capabilities.
@@ -216,11 +216,11 @@ export default function HomePage() {
             {bentoIndustries.map((item) => (
               <AnimatedSection
                 key={item.title}
-                className={`col-span-12 ${item.span} ${item.span.includes('row-span') ? 'min-h-0' : ''}`}
+                className={`col-span-12 ${item.span} min-w-0`}
               >
                 <Link
                   to={`/industries/${item.slug}`}
-                  className={`group relative block h-full overflow-hidden border border-kinetic-outline-variant ${item.height}`}
+                  className={`group relative block w-full overflow-hidden border border-kinetic-outline-variant ${item.height}`}
                 >
                   <img
                     src={item.image}
@@ -228,9 +228,9 @@ export default function HomePage() {
                     className={`absolute inset-0 w-full h-full transition-transform duration-700 group-hover:scale-105 ${item.imageClass ?? 'object-cover'}`}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
-                  <div className="absolute bottom-0 left-0 p-8 text-white">
-                    <h4 className="text-xl font-semibold uppercase mb-2">{item.title}</h4>
-                    <p className="text-white/75 max-w-md text-sm">{item.description}</p>
+                  <div className="absolute bottom-0 left-0 p-5 sm:p-6 lg:p-8 text-white max-w-full">
+                    <h4 className="text-base sm:text-lg lg:text-xl font-semibold uppercase mb-1 sm:mb-2">{item.title}</h4>
+                    <p className="text-white/75 max-w-md text-xs sm:text-sm leading-relaxed">{item.description}</p>
                   </div>
                 </Link>
               </AnimatedSection>
@@ -277,9 +277,9 @@ export default function HomePage() {
         {/* Partners */}
         <PageSection>
           <p className="stitch-label text-center mb-10 tracking-[0.4em]">Trusted Partners & Clients</p>
-          <div className="flex flex-nowrap justify-between items-center gap-4 lg:gap-6 overflow-x-auto opacity-50 w-full [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
+          <div className="flex flex-wrap xl:flex-nowrap justify-center xl:justify-between items-center gap-x-4 gap-y-3 lg:gap-6 opacity-50 w-full max-w-full">
             {partners.map((client) => (
-              <span key={client} className="shrink-0 whitespace-nowrap text-xs sm:text-sm lg:text-base font-bold tracking-tight text-kinetic-primary uppercase">
+              <span key={client} className="shrink-0 whitespace-nowrap text-[10px] sm:text-xs lg:text-sm xl:text-base font-bold tracking-tight text-kinetic-primary uppercase">
                 {client}
               </span>
             ))}
@@ -291,7 +291,7 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
             <AnimatedSection>
               <span className="stitch-label block mb-4">Contact Us</span>
-              <h2 className="text-3xl lg:text-5xl font-bold text-kinetic-primary leading-tight uppercase mb-6">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-kinetic-primary leading-tight uppercase mb-6 text-balance">
                 {company.tagline}
               </h2>
               <p className="text-kinetic-on-surface-variant text-lg mb-10 leading-relaxed">

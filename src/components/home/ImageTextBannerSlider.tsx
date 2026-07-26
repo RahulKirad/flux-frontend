@@ -19,7 +19,7 @@ export default function ImageTextBannerSlider() {
   return (
     <section className="stitch-section bg-kinetic-surface-low border-y border-kinetic-outline-variant">
       <div className="stitch-container">
-        <div className="relative overflow-hidden border border-kinetic-outline-variant bg-white min-h-[420px] lg:min-h-[480px]">
+        <div className="relative overflow-hidden border border-kinetic-outline-variant bg-white min-h-0">
           <AnimatePresence mode="wait">
             <motion.div
               key={slide.title}
@@ -27,19 +27,19 @@ export default function ImageTextBannerSlider() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.5 }}
-              className="grid lg:grid-cols-2 h-full"
+              className="grid lg:grid-cols-2 min-h-0"
             >
-              <div className="relative h-[220px] lg:h-auto lg:min-h-[480px] overflow-hidden">
+              <div className="relative min-h-[220px] sm:min-h-[280px] lg:min-h-[360px] xl:min-h-[420px] overflow-hidden">
                 <img src={slide.image} alt={slide.title} className="absolute inset-0 w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/30 to-transparent lg:hidden" />
               </div>
 
-              <div className="flex flex-col justify-center p-8 lg:p-12 xl:p-16">
-                <span className="stitch-label block mb-4">{slide.label}</span>
-                <h2 className="text-2xl lg:text-4xl font-bold text-kinetic-primary uppercase leading-tight mb-4">
+              <div className="flex flex-col justify-center p-6 sm:p-8 lg:p-10 xl:p-12 min-w-0">
+                <span className="stitch-label block mb-3 sm:mb-4">{slide.label}</span>
+                <h2 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-kinetic-primary uppercase leading-tight mb-3 sm:mb-4 text-balance">
                   {slide.title}
                 </h2>
-                <p className="text-kinetic-on-surface-variant text-base lg:text-lg leading-relaxed mb-8 max-w-lg">
+                <p className="text-kinetic-on-surface-variant text-sm sm:text-base lg:text-lg leading-relaxed mb-6 sm:mb-8 max-w-lg">
                   {slide.description}
                 </p>
                 <div className="flex flex-wrap gap-3">

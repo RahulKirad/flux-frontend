@@ -69,14 +69,14 @@ export function ImageTextBlock({
   return (
     <AnimatedSection>
       <div
-        className={`grid lg:grid-cols-2 gap-10 lg:gap-16 items-center ${reverse ? 'lg:[direction:rtl]' : ''}`}
+        className={`grid lg:grid-cols-2 gap-8 lg:gap-10 xl:gap-16 items-center ${reverse ? 'lg:[direction:rtl]' : ''}`}
       >
-        <div className={reverse ? 'lg:[direction:ltr]' : ''}>
+        <div className={`min-w-0 ${reverse ? 'lg:[direction:ltr]' : ''}`}>
           {label && <span className="stitch-label block mb-4">{label}</span>}
-          <h2 className="text-2xl lg:text-4xl font-bold text-kinetic-primary uppercase leading-tight mb-6">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-kinetic-primary uppercase leading-tight mb-4 sm:mb-6 text-balance">
             {title}
           </h2>
-          <p className="text-kinetic-on-surface-variant text-base lg:text-lg leading-relaxed mb-8">
+          <p className="text-kinetic-on-surface-variant text-sm sm:text-base lg:text-lg leading-relaxed mb-6 sm:mb-8">
             {description}
           </p>
           {link && (
@@ -89,7 +89,7 @@ export function ImageTextBlock({
             </Link>
           )}
         </div>
-        <div className={`relative h-[280px] lg:h-[400px] overflow-hidden border border-kinetic-outline-variant ${reverse ? 'lg:[direction:ltr]' : ''}`}>
+        <div className={`relative min-h-[240px] sm:min-h-[280px] lg:min-h-[340px] xl:min-h-[400px] overflow-hidden border border-kinetic-outline-variant ${reverse ? 'lg:[direction:ltr]' : ''}`}>
           <img src={image} alt={title} className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
         </div>
       </div>
