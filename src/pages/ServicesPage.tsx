@@ -10,7 +10,7 @@ import {
 } from '../components/common';
 import ContactForm from '../components/forms/ContactForm';
 import { BulletList, ContentPanel, ImageTextBlock, PageSection } from '../components/layout/ContentBlocks';
-import { servicesContent } from '../data/companyContent';
+import { getStaticServiceBySlug, getStaticServices, servicesContent } from '../data/companyContent';
 import { servicesApi } from '../services/api';
 import type { Service } from '../types';
 
@@ -21,26 +21,38 @@ export default function ServicesPage() {
     queryKey: ['services'],
     queryFn: () => servicesApi.getAll({ main: 'true' }),
     enabled: !slug,
+    retry: 1,
   });
 
   const { data: detailRes, isLoading: detailLoading } = useQuery({
     queryKey: ['service', slug],
     queryFn: () => servicesApi.getBySlug(slug!),
     enabled: !!slug,
+    retry: 1,
   });
 
   if (slug) {
     if (detailLoading) return <LoadingSpinner />;
-    const service: Service = detailRes?.data?.data;
-    if (!service) return <div className="stitch-section text-center py-20">Service not found</div>;
+    const service: Service | undefined = detailRes?.data?.data ?? getStaticServiceBySlug(slug);
+    const content = servicesContent[slug];
 
-    const content = servicesContent[service.slug];
-    const isToolsDie = service.slug === 'tools-die';
+    if (!service && !content) {
+      return <div className="stitch-section text-center py-20">Service not found</div>;
+    }
+
+    const displayService = service ?? {
+      id: 0,
+      parent_id: null,
+      slug,
+      title: slug,
+      short_description: content!.intro,
+    };
+    const isToolsDie = slug === 'tools-die';
 
     return (
       <>
-        <SEOHead title={`${service.title} | Flux Corp`} description={service.short_description} />
-        <PageHero label="Service" title={service.title} subtitle={service.short_description} />
+        <SEOHead title={`${displayService.title} | Flux Corp`} description={displayService.short_description} />
+        <PageHero label="Service" title={displayService.title} subtitle={displayService.short_description} />
 
         <PageSection className={isToolsDie ? '[&_.stitch-container]:max-w-[1400px]' : undefined}>
           {isToolsDie ? (
@@ -48,7 +60,7 @@ export default function ServicesPage() {
               <AnimatedSection>
                 <div className="max-w-3xl">
                   <p className="text-kinetic-on-surface-variant text-lg leading-relaxed mb-8">
-                    {content?.intro || service.short_description}
+                    {content?.intro || displayService.short_description}
                   </p>
                   {content && (
                     <>
@@ -63,7 +75,7 @@ export default function ServicesPage() {
                   <div className="w-full h-[280px] sm:h-[360px] lg:h-[520px] xl:h-[580px] border border-kinetic-outline-variant overflow-hidden bg-[#141414]">
                     <img
                       src={content.image}
-                      alt={service.title}
+                      alt={displayService.title}
                       className="w-full h-full object-contain object-center"
                     />
                   </div>
@@ -74,7 +86,7 @@ export default function ServicesPage() {
             <div className="grid lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-12 lg:gap-16 items-start">
               <AnimatedSection>
                 <p className="text-kinetic-on-surface-variant text-lg leading-relaxed mb-8">
-                  {content?.intro || service.short_description}
+                  {content?.intro || displayService.short_description}
                 </p>
                 {content && (
                   <>
@@ -82,14 +94,14 @@ export default function ServicesPage() {
                     <BulletList items={content.capabilities} />
                   </>
                 )}
-                {!content && service.description && (
-                  <div className="prose max-w-none text-kinetic-on-surface-variant" dangerouslySetInnerHTML={{ __html: service.description }} />
+                {!content && displayService.description && (
+                  <div className="prose max-w-none text-kinetic-on-surface-variant" dangerouslySetInnerHTML={{ __html: displayService.description }} />
                 )}
               </AnimatedSection>
               {content && (
                 <AnimatedSection delay={0.15}>
                   <div className="h-[360px] lg:h-[440px] border border-kinetic-outline-variant overflow-hidden">
-                    <img src={content.image} alt={service.title} className="w-full h-full object-cover" />
+                    <img src={content.image} alt={displayService.title} className="w-full h-full object-cover" />
                   </div>
                 </AnimatedSection>
               )}
@@ -104,11 +116,11 @@ export default function ServicesPage() {
           </PageSection>
         )}
 
-        {service.sub_services && service.sub_services.length > 0 && (
+        {displayService.sub_services && displayService.sub_services.length > 0 && (
           <PageSection tone={content?.deliverables ? 'white' : 'muted'}>
             <SectionHeading title="Sub-Services" />
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {service.sub_services.map((sub, i) => (
+              {displayService.sub_services.map((sub, i) => (
                 <AnimatedSection key={sub.id} delay={i * 0.05}>
                   <Link to={`/services/${sub.slug}`} className="block border border-kinetic-outline-variant p-6 bg-white hover:border-kinetic-primary transition h-full">
                     <h3 className="font-semibold uppercase text-kinetic-primary mb-2">{sub.title}</h3>
@@ -124,15 +136,15 @@ export default function ServicesPage() {
           <div className="grid lg:grid-cols-2 gap-12">
             <AnimatedSection>
               <SectionHeading title="Request a Consultation" centered={false} />
-              <ContactForm source="service_inquiry" serviceId={service.id} compact variant="stitch" />
+              <ContactForm source="service_inquiry" serviceId={displayService.id} compact variant="stitch" />
             </AnimatedSection>
-            {service.brochure_url && (
+            {displayService.brochure_url && (
               <AnimatedSection delay={0.15}>
                 <ContentPanel className="text-center h-full flex flex-col justify-center">
                   <Download className="w-12 h-12 text-kinetic-primary mx-auto mb-4" />
                   <h3 className="text-xl font-bold uppercase mb-2">Download Brochure</h3>
-                  <p className="text-kinetic-on-surface-variant mb-6">Detailed information about our {service.title} capabilities.</p>
-                  <a href={service.brochure_url} className="stitch-btn-primary mx-auto" download>Download PDF</a>
+                  <p className="text-kinetic-on-surface-variant mb-6">Detailed information about our {displayService.title} capabilities.</p>
+                  <a href={displayService.brochure_url} className="stitch-btn-primary mx-auto" download>Download PDF</a>
                 </ContentPanel>
               </AnimatedSection>
             )}
@@ -143,7 +155,8 @@ export default function ServicesPage() {
   }
 
   if (allLoading) return <LoadingSpinner />;
-  const services: Service[] = allRes?.data?.data || [];
+  const apiServices: Service[] = allRes?.data?.data || [];
+  const services = apiServices.length > 0 ? apiServices : getStaticServices();
 
   return (
     <>

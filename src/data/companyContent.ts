@@ -218,6 +218,39 @@ export const servicesContent: Record<
   },
 };
 
+const staticServiceTitles: Record<string, string> = {
+  'engineering-design': 'Engineering Design',
+  'composites-forming': 'Composites & Forming',
+  prototyping: 'Prototyping',
+  'tools-die': 'Tools & Die',
+  'automotive-styling': 'Automotive Styling',
+  'bus-body-manufacturing': 'Bus Body Manufacturing',
+  'railway-components': 'Railway Components',
+  'industrial-components': 'Industrial Components',
+};
+
+export function getStaticServices() {
+  return Object.entries(servicesContent).map(([slug, content], id) => ({
+    id,
+    parent_id: null,
+    slug,
+    title: staticServiceTitles[slug] ?? slug,
+    short_description: content.intro.length > 120 ? `${content.intro.slice(0, 120)}…` : content.intro,
+  }));
+}
+
+export function getStaticServiceBySlug(slug: string) {
+  const content = servicesContent[slug];
+  if (!content) return undefined;
+  return {
+    id: 0,
+    parent_id: null,
+    slug,
+    title: staticServiceTitles[slug] ?? slug,
+    short_description: content.intro.length > 150 ? `${content.intro.slice(0, 150)}…` : content.intro,
+  };
+}
+
 export const industriesContent = [
   {
     slug: 'automotive',
