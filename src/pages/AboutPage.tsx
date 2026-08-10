@@ -11,13 +11,6 @@ const timeline = [
   { year: '2024', title: 'EV & Lightweighting', desc: 'Leading EV bus body, battery enclosure, and composite lightweighting programs.' },
 ];
 
-const leadership = [
-  { name: 'Demo 1', initial: '1', role: 'CEO & Founder', desc: '25+ years in automotive and bus body engineering' },
-  { name: 'Demo 2', initial: '2', role: 'CTO', desc: 'Expert in composite materials, FRP, and vacuum forming' },
-  { name: 'Demo 3', initial: '3', role: 'VP Manufacturing', desc: 'Bus body manufacturing and AIS 153 compliance specialist' },
-  { name: 'Demo 4', initial: '4', role: 'Head of Design', desc: 'Automotive styling, CAS, and Class-A surfacing lead' },
-];
-
 export default function AboutPage() {
   return (
     <>
@@ -112,24 +105,6 @@ export default function AboutPage() {
             <h3 className="text-lg font-semibold uppercase text-kinetic-primary mb-4">Supply Chain</h3>
             <BulletList items={[...supplyChain.sourcing, ...supplyChain.logistics]} />
           </ContentPanel>
-        </div>
-      </PageSection>
-
-      <PageSection>
-        <SectionHeading label="Leadership" title="Our Team" />
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {leadership.map((person, i) => (
-            <AnimatedSection key={person.name} delay={i * 0.08}>
-              <ContentPanel className="text-center h-full">
-                <div className="w-16 h-16 bg-kinetic-surface-container mx-auto mb-4 flex items-center justify-center">
-                  <span className="text-xl font-bold text-kinetic-primary">{person.initial}</span>
-                </div>
-                <h4 className="font-semibold text-kinetic-primary">{person.name}</h4>
-                <p className="text-xs uppercase tracking-widest text-kinetic-secondary mt-1">{person.role}</p>
-                <p className="text-kinetic-on-surface-variant text-sm mt-3">{person.desc}</p>
-              </ContentPanel>
-            </AnimatedSection>
-          ))}
         </div>
       </PageSection>
 

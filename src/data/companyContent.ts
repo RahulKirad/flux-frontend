@@ -1,6 +1,6 @@
 /** Flux Corp website content sourced from company brochure (DOC-20260323-WA0015) */
 
-import { electricVehiclesImage, railwaysImage, toolsDieImage } from '../assets/images';
+import { busImage, electricVehiclesImage, industrialEquipmentImage, railwaysImage, toolsDieImage, toolsAndDieImage, engineeringDesignImage } from '../assets/images';
 
 export const company = {
   name: 'Flux Corp',
@@ -110,7 +110,7 @@ export const homeBannerSections = [
 
 export const servicesContent: Record<
   string,
-  { intro: string; capabilities: string[]; deliverables?: string[]; image: string }
+  { intro: string; detail?: string; capabilities: string[]; deliverables?: string[]; image: string }
 > = {
   'engineering-design': {
     intro:
@@ -127,7 +127,7 @@ export const servicesContent: Record<
       'Interior: instrument panels, consoles, door panels, switch systems, acoustic components',
       'Exterior: fascias, bumpers, lighting, doors, escape hatches, wheel arches, side panels',
     ],
-    image: 'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1000&q=80',
+    image: engineeringDesignImage,
   },
   'composites-forming': {
     intro:
@@ -166,7 +166,7 @@ export const servicesContent: Record<
       'Epoxy-aluminium hybrid tools for specialized applications',
       '1:1 scale models, aero models, and running models',
     ],
-    image: toolsDieImage,
+    image: toolsAndDieImage,
   },
   'automotive-styling': {
     intro:
@@ -191,7 +191,7 @@ export const servicesContent: Record<
       'Assembly and integration support',
       'EV-ready lightweighting solutions',
     ],
-    image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=1000&q=80',
+    image: busImage,
   },
   'railway-components': {
     intro:
@@ -208,11 +208,15 @@ export const servicesContent: Record<
   'industrial-components': {
     intro:
       'Custom industrial component engineering and production for material handling, packaging systems, and special-purpose equipment across diverse industrial sectors.',
+    detail:
+      'Flux Corp partners with OEMs, system integrators, and plant operators to deliver robust components engineered for high-cycle duty, tight tolerances, and reliable field performance. Our Chikhali and Chakan facilities combine CAD-driven design, CNC machining, composites forming, and assembly support — helping you move from concept validation to repeatable series production with shorter lead times.',
     capabilities: [
-      'Packaging trays for logistics applications',
-      'Material handling equipment components',
-      'Special purpose equipment development',
-      'Precision CNC and composite manufacturing',
+      'Packaging trays, dunnage, and logistics handling solutions',
+      'Conveyor, crane, and material handling sub-assemblies',
+      'Special-purpose machine frames, guards, and enclosures',
+      'Precision CNC machined parts in metals, plastics, and composites',
+      'Vacuum-formed and FRP panels for industrial equipment',
+      'Prototype builds, pilot runs, and scalable production support',
     ],
     image: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=1000&q=80',
   },
@@ -311,7 +315,7 @@ export const industriesContent = [
       'Precision tooling and production dies',
       'Custom industrial assemblies',
     ],
-    image: toolsDieImage,
+    image: industrialEquipmentImage,
   },
   {
     slug: 'material-handling',
@@ -392,32 +396,7 @@ export const supplyChain = {
   logistics: ['Customs documentation and clearance', 'Export certifications for international markets', 'Efficient transportation network'],
 };
 
-export const caseStudiesStatic = [
-  {
-    slug: 'bus-body-lightweighting',
-    title: 'Bus Body Lightweighting',
-    industry: 'Commercial Vehicles',
-    challenge: 'Reduce the weight of bus body panels to improve fuel efficiency and meet regulatory requirements.',
-    solution: 'Developed FRP composite panels using advanced simulation and prototyping techniques, achieving significant weight savings without compromising strength or durability.',
-    outcome: 'Enhanced vehicle performance, reduced operating costs, and improved compliance with AIS 153 standards.',
-  },
-  {
-    slug: 'railway-coach-interiors',
-    title: 'Railway Coach Interior Components',
-    industry: 'Railways',
-    challenge: 'Design and manufacture durable, lightweight interior panels for Indian Railway coaches.',
-    solution: 'Utilized vacuum forming and fiber-reinforced plastics to produce panels meeting stringent fire safety and durability requirements.',
-    outcome: 'High-quality components enhancing passenger comfort and safety with full RDSO and RITES compliance.',
-  },
-  {
-    slug: 'ev-battery-enclosure',
-    title: 'EV Battery Enclosure Engineering',
-    industry: 'Electric Vehicles',
-    challenge: 'Engineer a lightweight, crash-safe battery enclosure for an electric bus platform within tight packaging constraints.',
-    solution: 'Combined CAE simulation, composite material qualification, and rapid prototyping to validate structural performance before tooling.',
-    outcome: 'Production-ready enclosure design with 18% weight reduction and validated crash performance — delivered ahead of series tooling.',
-  },
-];
+export { caseStudiesStatic } from './caseStudiesContent';
 
 export const marketTrends = {
   bus: [

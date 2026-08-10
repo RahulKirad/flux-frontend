@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { Menu, X, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -30,6 +30,8 @@ export default function Header() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+  const mobileDropdownRef = useRef<HTMLDivElement>(null);
   const { pathname } = useLocation();
   const isHome = pathname === '/';
 
@@ -44,6 +46,23 @@ export default function Header() {
     setMobileOpen(false);
     setDropdownOpen(null);
   }, [pathname]);
+
+  useEffect(() => {
+    if (!dropdownOpen) return;
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      const insideDropdown =
+        dropdownRef.current?.contains(target) || mobileDropdownRef.current?.contains(target);
+
+      if (!insideDropdown) {
+        setDropdownOpen(null);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [dropdownOpen]);
 
   const homeNavClass = (isActive: boolean) =>
     isActive
@@ -84,7 +103,11 @@ export default function Header() {
 
           <nav className="hidden lg:flex items-center gap-2 lg:gap-3 xl:gap-5 2xl:gap-7 flex-1 justify-center min-w-0 overflow-visible">
             {navLinks.map((link) => (
-              <div key={link.path} className="relative shrink-0">
+              <div
+                key={link.path}
+                className="relative shrink-0"
+                ref={link.children && dropdownOpen === link.label ? dropdownRef : undefined}
+              >
                 {link.children ? (
                   <button
                     type="button"
@@ -179,20 +202,47 @@ export default function Header() {
               {navLinks.map((link) => (
                 <div key={link.path}>
                   {link.children ? (
-                    <button
-                      type="button"
-                      aria-expanded={dropdownOpen === link.label}
-                      onClick={() => toggleDropdown(link.label)}
-                      className={`w-full flex items-center justify-between py-2.5 text-sm uppercase tracking-widest transition ${
-                        isHome ? 'text-white/80 hover:text-white' : 'text-kinetic-secondary hover:text-kinetic-primary'
-                      }`}
-                    >
-                      {link.label}
-                      <ChevronDown
-                        size={16}
-                        className={`transition-transform duration-200 ${dropdownOpen === link.label ? 'rotate-180' : ''}`}
-                      />
-                    </button>
+                    <div ref={dropdownOpen === link.label ? mobileDropdownRef : undefined}>
+                      <button
+                        type="button"
+                        aria-expanded={dropdownOpen === link.label}
+                        onClick={() => toggleDropdown(link.label)}
+                        className={`w-full flex items-center justify-between py-2.5 text-sm uppercase tracking-widest transition ${
+                          isHome ? 'text-white/80 hover:text-white' : 'text-kinetic-secondary hover:text-kinetic-primary'
+                        }`}
+                      >
+                        {link.label}
+                        <ChevronDown
+                          size={16}
+                          className={`transition-transform duration-200 ${dropdownOpen === link.label ? 'rotate-180' : ''}`}
+                        />
+                      </button>
+                      {dropdownOpen === link.label && (
+                        <div className="pl-4 pb-2 space-y-1">
+                          <Link
+                            to={link.path}
+                            className={`block py-2 text-xs uppercase tracking-wider font-semibold ${
+                              isHome ? 'text-white hover:text-white/90' : 'text-kinetic-primary hover:text-kinetic-primary/80'
+                            }`}
+                            onClick={() => setMobileOpen(false)}
+                          >
+                            All Services
+                          </Link>
+                          {link.children.map((child) => (
+                            <Link
+                              key={child.path}
+                              to={child.path}
+                              className={`block py-2 text-xs uppercase tracking-wider ${
+                                isHome ? 'text-white/60 hover:text-white' : 'text-kinetic-on-surface-variant hover:text-kinetic-primary'
+                              }`}
+                              onClick={() => setMobileOpen(false)}
+                            >
+                              {child.label}
+                            </Link>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   ) : (
                     <Link
                       to={link.path}
@@ -203,31 +253,6 @@ export default function Header() {
                     >
                       {link.label}
                     </Link>
-                  )}
-                  {link.children && dropdownOpen === link.label && (
-                    <div className="pl-4 pb-2 space-y-1">
-                      <Link
-                        to={link.path}
-                        className={`block py-2 text-xs uppercase tracking-wider font-semibold ${
-                          isHome ? 'text-white hover:text-white/90' : 'text-kinetic-primary hover:text-kinetic-primary/80'
-                        }`}
-                        onClick={() => setMobileOpen(false)}
-                      >
-                        All Services
-                      </Link>
-                      {link.children.map((child) => (
-                        <Link
-                          key={child.path}
-                          to={child.path}
-                          className={`block py-2 text-xs uppercase tracking-wider ${
-                            isHome ? 'text-white/60 hover:text-white' : 'text-kinetic-on-surface-variant hover:text-kinetic-primary'
-                          }`}
-                          onClick={() => setMobileOpen(false)}
-                        >
-                          {child.label}
-                        </Link>
-                      ))}
-                    </div>
                   )}
                 </div>
               ))}

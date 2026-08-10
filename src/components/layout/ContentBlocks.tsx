@@ -38,11 +38,24 @@ export function ContentPanel({
   );
 }
 
-export function BulletList({ items, dark = false }: { items: string[]; dark?: boolean }) {
+export function BulletList({
+  items,
+  dark = false,
+  centered = false,
+}: {
+  items: string[];
+  dark?: boolean;
+  centered?: boolean;
+}) {
   return (
-    <ul className="space-y-3">
+    <ul className={`space-y-3 ${centered ? 'max-w-2xl mx-auto' : ''}`}>
       {items.map((item) => (
-        <li key={item} className={`flex gap-3 text-sm lg:text-base leading-relaxed ${dark ? 'text-white/80' : 'text-kinetic-on-surface-variant'}`}>
+        <li
+          key={item}
+          className={`flex gap-3 text-sm lg:text-base leading-relaxed ${
+            centered ? 'justify-center text-center' : ''
+          } ${dark ? 'text-white/80' : 'text-kinetic-on-surface-variant'}`}
+        >
           <span className={`mt-2 w-1.5 h-1.5 shrink-0 ${dark ? 'bg-white' : 'bg-kinetic-primary'}`} />
           {item}
         </li>

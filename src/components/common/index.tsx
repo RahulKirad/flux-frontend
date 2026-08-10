@@ -102,14 +102,16 @@ export function SectionHeading({
   title,
   description,
   centered = true,
+  className = '',
 }: {
   label?: string;
   title: string;
   description?: string;
   centered?: boolean;
+  className?: string;
 }) {
   return (
-    <div className={`mb-12 lg:mb-16 ${centered ? 'text-center' : ''}`}>
+    <div className={`mb-12 lg:mb-16 ${centered ? 'text-center' : ''} ${className}`.trim()}>
       {label && <span className="stitch-label block mb-4">{label}</span>}
       <h2 className="text-3xl lg:text-4xl font-bold text-kinetic-primary uppercase leading-tight mt-0 mb-4">
         {title}

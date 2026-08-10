@@ -14,6 +14,8 @@ interface ContactFormData {
 interface ContactFormProps {
   source?: string;
   serviceId?: number;
+  serviceSlug?: string;
+  serviceName?: string;
   title?: string;
   compact?: boolean;
   variant?: 'default' | 'stitch';
@@ -22,6 +24,8 @@ interface ContactFormProps {
 export default function ContactForm({
   source = 'contact_form',
   serviceId,
+  serviceSlug,
+  serviceName,
   title,
   compact,
   variant = 'default',
@@ -30,6 +34,10 @@ export default function ContactForm({
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const isStitch = variant === 'stitch';
+  const isServiceInquiry = Boolean(serviceName);
+  const messagePlaceholder = isServiceInquiry
+    ? `Tell us about your ${serviceName} requirements, timeline, and project scope...`
+    : 'How can we help you?';
 
   const onSubmit = async (data: ContactFormData) => {
     setLoading(true);
@@ -37,7 +45,9 @@ export default function ContactForm({
       await leadsApi.create({
         ...data,
         source,
-        service_id: serviceId,
+        service_id: serviceId && serviceId > 0 ? serviceId : undefined,
+        service_slug: serviceSlug,
+        service_name: serviceName,
       });
       setSubmitted(true);
       reset();
@@ -56,7 +66,9 @@ export default function ContactForm({
           Thank You!
         </h3>
         <p className={isStitch ? 'text-kinetic-on-surface-variant' : 'text-gray-600'}>
-          We&apos;ve received your inquiry and will contact you shortly.
+          {isServiceInquiry
+            ? `We've received your ${serviceName} consultation request and will contact you shortly.`
+            : "We've received your inquiry and will contact you shortly."}
         </p>
         <button
           onClick={() => setSubmitted(false)}
@@ -87,6 +99,15 @@ export default function ContactForm({
           {title}
         </h3>
       )}
+      {isServiceInquiry && (
+        <div className="mb-6 border border-kinetic-outline-variant bg-white px-4 py-3">
+          <p className="text-xs font-semibold uppercase tracking-wider text-kinetic-secondary mb-1">Service</p>
+          <p className="text-kinetic-primary font-semibold uppercase">{serviceName}</p>
+          <p className="text-kinetic-on-surface-variant text-sm mt-2 leading-relaxed">
+            This request will be routed to our {serviceName} team.
+          </p>
+        </div>
+      )}
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         {isStitch ? (
           <>
@@ -101,10 +122,16 @@ export default function ContactForm({
                 <input {...register('company')} className={inputClass} />
               </div>
             </div>
-            <div>
-              <label className={labelClass}>Email Address *</label>
-              <input type="email" {...register('email', { required: 'Email is required' })} className={inputClass} />
-              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className={labelClass}>Email Address *</label>
+                <input type="email" {...register('email', { required: 'Email is required' })} className={inputClass} />
+                {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email.message}</p>}
+              </div>
+              <div>
+                <label className={labelClass}>Phone</label>
+                <input {...register('phone')} className={inputClass} />
+              </div>
             </div>
           </>
         ) : (
@@ -130,11 +157,14 @@ export default function ContactForm({
           </div>
         )}
         <div>
-          <label className={labelClass}>{isStitch ? 'Project Details *' : 'Message *'}</label>
+          <label className={labelClass}>
+            {isServiceInquiry ? `${serviceName} Project Details *` : isStitch ? 'Project Details *' : 'Message *'}
+          </label>
           <textarea
             {...register('message', { required: 'Message is required' })}
             rows={4}
             className={textareaClass}
+            placeholder={messagePlaceholder}
           />
           {errors.message && <p className="text-red-500 text-xs mt-1">{errors.message.message}</p>}
         </div>
@@ -148,7 +178,7 @@ export default function ContactForm({
           }
         >
           {isStitch ? (
-            loading ? 'Submitting...' : 'Submit Request'
+            loading ? 'Submitting...' : isServiceInquiry ? `Submit ${serviceName} Request` : 'Submit Request'
           ) : (
             <>
               <ArrowRight size={18} className="mr-2" />

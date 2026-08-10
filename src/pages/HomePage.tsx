@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import { AnimatedSection, SEOHead, SectionHeading } from '../components/common';
 import HeroBannerSlider from '../components/home/HeroBannerSlider';
-import { railwaysImage, electricVehiclesImage } from '../assets/images';
+import { railwaysImage, electricVehiclesImage, industrialEquipmentImage } from '../assets/images';
 import ImageTextBannerSlider from '../components/home/ImageTextBannerSlider';
 import ContactForm from '../components/forms/ContactForm';
 import { BulletList, ImageTextBlock, PageSection, StatStrip } from '../components/layout/ContentBlocks';
@@ -54,7 +54,7 @@ const bentoIndustries = [
     description: 'EV platform design and lightweighting solutions.',
     image: electricVehiclesImage,
     span: 'md:col-span-6 lg:col-span-4 xl:col-span-4 bento-row-span-2',
-    height: 'min-h-[240px] sm:min-h-[280px] lg:min-h-[300px] xl:min-h-[520px]',
+    height: 'min-h-[240px] sm:min-h-[280px] lg:min-h-[520px] xl:min-h-[520px]',
     imageClass: 'object-cover object-center',
   },
   {
@@ -70,9 +70,9 @@ const bentoIndustries = [
     title: 'Industrial Equipment',
     slug: 'industrial-equipment',
     description: 'Heavy machinery and industrial component engineering.',
-    image: 'https://images.unsplash.com/photo-1565793300263-d78378306091?w=1200&q=80',
+    image: industrialEquipmentImage,
     span: 'md:col-span-12 lg:col-span-8',
-    height: 'min-h-[240px] sm:min-h-[280px] lg:min-h-[320px] xl:min-h-[360px]',
+    height: 'min-h-[260px] sm:min-h-[300px] lg:min-h-[340px] xl:min-h-[380px]',
     imageClass: 'object-cover object-center',
   },
   {
@@ -216,16 +216,17 @@ export default function HomePage() {
             {bentoIndustries.map((item) => (
               <AnimatedSection
                 key={item.title}
-                className={`col-span-12 ${item.span} min-w-0`}
+                className={`col-span-12 ${item.span} min-w-0 h-full`}
               >
                 <Link
                   to={`/industries/${item.slug}`}
-                  className={`group relative block w-full overflow-hidden border border-kinetic-outline-variant ${item.height}`}
+                  className={`group relative block w-full h-full overflow-hidden border border-kinetic-outline-variant ${item.height}`}
                 >
                   <img
                     src={item.image}
                     alt={item.title}
-                    className={`absolute inset-0 w-full h-full transition-transform duration-700 group-hover:scale-105 ${item.imageClass ?? 'object-cover'}`}
+                    className={`absolute inset-0 w-full h-full min-h-full transition-transform duration-700 group-hover:scale-105 ${item.imageClass ?? 'object-cover'}`}
+                    loading="lazy"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                   <div className="absolute bottom-0 left-0 p-5 sm:p-6 lg:p-8 text-white max-w-full">

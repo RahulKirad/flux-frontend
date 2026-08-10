@@ -8,6 +8,7 @@ import {
   SEOHead,
   LoadingSpinner,
 } from '../components/common';
+import { busImage, engineeringImage, prototypingImage, toolsDieImage, toolsAndDieImage } from '../assets/images';
 import ContactForm from '../components/forms/ContactForm';
 import { BulletList, ContentPanel, ImageTextBlock, PageSection } from '../components/layout/ContentBlocks';
 import { getStaticServiceBySlug, getStaticServices, servicesContent } from '../data/companyContent';
@@ -48,17 +49,120 @@ export default function ServicesPage() {
       short_description: content!.intro,
     };
     const isToolsDie = slug === 'tools-die';
+    const isEngineeringDesign = slug === 'engineering-design';
+    const splitConsultationMeta: Record<string, { label: string; heading: string }> = {
+      'composites-forming': {
+        label: 'Composites & Forming',
+        heading: 'Lightweight, High-Strength Solutions',
+      },
+      'automotive-styling': {
+        label: 'Automotive Styling',
+        heading: 'Creative Vision, Production Ready',
+      },
+      'industrial-components': {
+        label: 'Industrial Components',
+        heading: 'Precision Components for Demanding Environments',
+      },
+    };
+    const isPrototyping = slug === 'prototyping';
+    const isBusBody = slug === 'bus-body-manufacturing';
+    const isIndustrialComponents = slug === 'industrial-components';
+    const hasSplitConsultation =
+      isEngineeringDesign || isToolsDie || isPrototyping || isBusBody || isIndustrialComponents || slug in splitConsultationMeta;
+    const consultationImage =
+      isEngineeringDesign ? engineeringImage
+      : isToolsDie ? toolsDieImage
+      : isPrototyping ? prototypingImage
+      : isBusBody ? busImage
+      : null;
+
+    const serviceConsultationProps = {
+      source: 'service_inquiry' as const,
+      serviceId: displayService.id > 0 ? displayService.id : undefined,
+      serviceSlug: slug,
+      serviceName: displayService.title,
+      compact: true,
+      variant: 'stitch' as const,
+    };
+
+    const consultationForm = (
+      <AnimatedSection className="h-full flex flex-col justify-center" delay={isBusBody || isIndustrialComponents ? 0 : 0.15}>
+        <SectionHeading
+          title={`Request a Consultation — ${displayService.title}`}
+          centered={false}
+          className="!mb-8 lg:!mb-10"
+        />
+        <ContactForm {...serviceConsultationProps} />
+      </AnimatedSection>
+    );
+
+    const consultationImageBlock = consultationImage ? (
+      <AnimatedSection className="h-full" delay={isBusBody ? 0.15 : 0}>
+        <div className="h-[280px] sm:h-[360px] lg:h-full lg:min-h-[520px] border border-kinetic-outline-variant overflow-hidden bg-[#141414]">
+          <img
+            src={consultationImage}
+            alt={
+              isToolsDie ? 'Tools and die manufacturing'
+              : isPrototyping ? 'Rapid prototyping capabilities and processes'
+              : isBusBody ? 'Bus body manufacturing'
+              : 'Engineering design deliverables and components'
+            }
+            className="w-full h-full object-contain object-center"
+          />
+        </div>
+      </AnimatedSection>
+    ) : null;
+
+    const consultationMeta = slug ? splitConsultationMeta[slug] : undefined;
+
+    const consultationContentBlock = consultationMeta ? (
+      <AnimatedSection className="h-full" delay={isIndustrialComponents ? 0.15 : 0}>
+        <ContentPanel className="h-full flex flex-col justify-center">
+          <span className="stitch-label block mb-4">{consultationMeta.label}</span>
+          <h3 className="text-2xl lg:text-3xl font-bold uppercase text-kinetic-primary mb-4 leading-tight">
+            {consultationMeta.heading}
+          </h3>
+          <p className="text-kinetic-on-surface-variant text-base lg:text-lg leading-relaxed mb-4">
+            {content?.intro || displayService.short_description}
+          </p>
+          {'detail' in (content ?? {}) && content?.detail && (
+            <p className="text-kinetic-on-surface-variant text-sm lg:text-base leading-relaxed mb-6">
+              {content.detail}
+            </p>
+          )}
+          {content && (
+            <>
+              <h4 className="text-sm font-semibold uppercase text-kinetic-primary mb-3">What We Deliver</h4>
+              <BulletList items={isIndustrialComponents ? content.capabilities : content.capabilities.slice(0, 4)} />
+            </>
+          )}
+          {isIndustrialComponents && (
+            <p className="text-kinetic-on-surface-variant text-sm leading-relaxed mt-6 pt-6 border-t border-kinetic-outline-variant">
+              Serving logistics, packaging, food processing, pharmaceutical, automotive ancillary, and heavy equipment
+              programs across India and export markets.
+            </p>
+          )}
+        </ContentPanel>
+      </AnimatedSection>
+    ) : null;
 
     return (
       <>
-        <SEOHead title={`${displayService.title} | Flux Corp`} description={displayService.short_description} />
-        <PageHero label="Service" title={displayService.title} subtitle={displayService.short_description} />
+        <SEOHead
+          title={`${displayService.title} | Flux Corp`}
+          description={(content?.intro || displayService.short_description || '').slice(0, 160)}
+        />
+        <PageHero
+          label="Service"
+          title={displayService.title}
+          subtitle={content?.intro || displayService.short_description}
+        />
 
         <PageSection className={isToolsDie ? '[&_.stitch-container]:max-w-[1400px]' : undefined}>
           {isToolsDie ? (
-            <div className="space-y-12 lg:space-y-16">
-              <AnimatedSection>
-                <div className="max-w-3xl">
+            <div className="grid lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-8 lg:gap-12 xl:gap-16 items-stretch">
+              <AnimatedSection className="h-full">
+                <div className="h-full flex flex-col justify-center">
                   <p className="text-kinetic-on-surface-variant text-lg leading-relaxed mb-8">
                     {content?.intro || displayService.short_description}
                   </p>
@@ -71,10 +175,10 @@ export default function ServicesPage() {
                 </div>
               </AnimatedSection>
               {content && (
-                <AnimatedSection delay={0.15}>
-                  <div className="w-full h-[280px] sm:h-[360px] lg:h-[520px] xl:h-[580px] border border-kinetic-outline-variant overflow-hidden bg-[#141414]">
+                <AnimatedSection delay={0.15} className="h-full">
+                  <div className="w-full h-[280px] sm:h-[360px] lg:h-full lg:min-h-[420px] xl:min-h-[480px] border border-kinetic-outline-variant overflow-hidden bg-[#141414]">
                     <img
-                      src={content.image}
+                      src={toolsAndDieImage}
                       alt={displayService.title}
                       className="w-full h-full object-contain object-center"
                     />
@@ -111,8 +215,8 @@ export default function ServicesPage() {
 
         {content?.deliverables && (
           <PageSection tone="muted">
-            <SectionHeading label="Deliverables" title="Components & Applications" centered={false} />
-            <BulletList items={content.deliverables} />
+            <SectionHeading label="Deliverables" title="Components & Applications" />
+            <BulletList items={content.deliverables} centered />
           </PageSection>
         )}
 
@@ -132,23 +236,50 @@ export default function ServicesPage() {
           </PageSection>
         )}
 
-        <PageSection tone="muted">
-          <div className="grid lg:grid-cols-2 gap-12">
-            <AnimatedSection>
-              <SectionHeading title="Request a Consultation" centered={false} />
-              <ContactForm source="service_inquiry" serviceId={displayService.id} compact variant="stitch" />
-            </AnimatedSection>
-            {displayService.brochure_url && (
-              <AnimatedSection delay={0.15}>
-                <ContentPanel className="text-center h-full flex flex-col justify-center">
-                  <Download className="w-12 h-12 text-kinetic-primary mx-auto mb-4" />
-                  <h3 className="text-xl font-bold uppercase mb-2">Download Brochure</h3>
-                  <p className="text-kinetic-on-surface-variant mb-6">Detailed information about our {displayService.title} capabilities.</p>
-                  <a href={displayService.brochure_url} className="stitch-btn-primary mx-auto" download>Download PDF</a>
-                </ContentPanel>
+        <PageSection
+          tone="muted"
+          className={`${hasSplitConsultation ? '!pt-6 md:!pt-8 lg:!pt-10' : ''} ${isToolsDie ? '[&_.stitch-container]:max-w-[1400px]' : ''}`.trim() || undefined}
+        >
+          {hasSplitConsultation ? (
+            <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-stretch">
+              {isBusBody ? (
+                <>
+                  {consultationForm}
+                  {consultationImageBlock}
+                </>
+              ) : isIndustrialComponents ? (
+                <>
+                  {consultationForm}
+                  {consultationContentBlock}
+                </>
+              ) : (
+                <>
+                  {consultationImage ? consultationImageBlock : consultationContentBlock}
+                  {consultationForm}
+                </>
+              )}
+            </div>
+          ) : (
+            <div className="grid lg:grid-cols-2 gap-12">
+              <AnimatedSection>
+                <SectionHeading
+                  title={`Request a Consultation — ${displayService.title}`}
+                  centered={false}
+                />
+                <ContactForm {...serviceConsultationProps} />
               </AnimatedSection>
-            )}
-          </div>
+              {displayService.brochure_url && (
+                <AnimatedSection delay={0.15}>
+                  <ContentPanel className="text-center h-full flex flex-col justify-center">
+                    <Download className="w-12 h-12 text-kinetic-primary mx-auto mb-4" />
+                    <h3 className="text-xl font-bold uppercase mb-2">Download Brochure</h3>
+                    <p className="text-kinetic-on-surface-variant mb-6">Detailed information about our {displayService.title} capabilities.</p>
+                    <a href={displayService.brochure_url} className="stitch-btn-primary mx-auto" download>Download PDF</a>
+                  </ContentPanel>
+                </AnimatedSection>
+              )}
+            </div>
+          )}
         </PageSection>
       </>
     );

@@ -3,10 +3,17 @@ import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { Search } from 'lucide-react';
 import { AnimatedSection, PageHero, SectionHeading, SEOHead, LoadingSpinner } from '../components/common';
-import ProjectCardSlideshow from '../components/common/ProjectCardSlideshow';
+import ProjectGridCard from '../components/common/ProjectGridCard';
 import { BulletList, ContentPanel, ImageTextBlock, PageSection } from '../components/layout/ContentBlocks';
 import { assignProjectCardSlides } from '../data/projectCardImages';
-import { caseStudiesStatic, industriesContent, marketTrends } from '../data/companyContent';
+import {
+  enrichProject,
+  getProjectLayout,
+  getProjectVisuals,
+  getStaticProjectBySlug,
+  getStaticProjects,
+} from '../data/projectsContent';
+import { industriesContent, marketTrends } from '../data/companyContent';
 import { projectsApi, industriesApi } from '../services/api';
 import type { Project, Industry } from '../types';
 
@@ -25,18 +32,44 @@ export default function ProjectsPage() {
     queryKey: ['project', slug],
     queryFn: () => projectsApi.getBySlug(slug!),
     enabled: !!slug,
+    retry: false,
   });
 
-  const projectList: Project[] | undefined = data?.data?.data;
+  const staticProject = slug ? getStaticProjectBySlug(slug) : undefined;
+
+  const apiProjects: Project[] | undefined = data?.data?.data;
+  const hasFilters = Boolean(search || category);
+
+  const displayProjects = useMemo(() => {
+    if (apiProjects?.length) {
+      return apiProjects.map((project) => enrichProject(project));
+    }
+    if (!hasFilters) {
+      return getStaticProjects();
+    }
+    return [];
+  }, [apiProjects, hasFilters]);
+
   const projectSlides = useMemo(
-    () => assignProjectCardSlides(projectList ?? []),
-    [projectList],
+    () => assignProjectCardSlides(displayProjects),
+    [displayProjects],
   );
 
   if (slug) {
-    if (detailLoading) return <LoadingSpinner />;
-    const project: Project = detailRes?.data?.data;
+    const apiProject: Project | undefined = detailRes?.data?.data;
+    const project = apiProject ? enrichProject(apiProject) : staticProject;
+
+    if (!project && detailLoading) return <LoadingSpinner />;
     if (!project) return <div className="stitch-section text-center py-20">Project not found</div>;
+
+    const visuals = getProjectVisuals(project.slug);
+    const galleryImages = project.gallery?.length
+      ? project.gallery
+      : (visuals?.slides ?? (project.banner ? [project.banner] : [])).map((url, id) => ({
+          id,
+          url,
+          media_type: 'image' as const,
+        }));
 
     return (
       <>
@@ -63,13 +96,13 @@ export default function ProjectsPage() {
                 <p className="text-kinetic-on-surface-variant leading-relaxed">{project.results}</p>
               </AnimatedSection>
             )}
-            {project.gallery && project.gallery.length > 0 && (
+            {galleryImages.length > 0 && (
               <AnimatedSection>
                 <h2 className="text-xl font-bold uppercase text-kinetic-primary mb-4">Gallery</h2>
                 <div className="grid md:grid-cols-2 gap-4">
-                  {project.gallery.map((item) => (
+                  {galleryImages.map((item) => (
                     <div key={item.id} className="h-64 border border-kinetic-outline-variant overflow-hidden">
-                      <img src={item.url} alt={item.caption || ''} className="w-full h-full object-cover" />
+                      <img src={item.url} alt={'caption' in item ? item.caption || project.title : project.title} className="w-full h-full object-cover" />
                     </div>
                   ))}
                 </div>
@@ -110,38 +143,26 @@ export default function ProjectsPage() {
           </select>
         </div>
 
-        {projectList && projectList.length > 0 ? (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {projectList.map((project, i) => (
-              <AnimatedSection key={project.id} delay={i * 0.05}>
-                <Link to={`/projects/${project.slug}`} className="group block border border-kinetic-outline-variant overflow-hidden bg-white hover:border-kinetic-primary transition h-full">
-                  <div className="h-48 overflow-hidden">
-                    <ProjectCardSlideshow
-                      images={projectSlides.get(project.id) ?? []}
-                      alt={project.title}
-                    />
-                  </div>
-                  <div className="p-6">
-                    <span className="stitch-label">{project.category}</span>
-                    <h3 className="text-lg font-semibold uppercase text-kinetic-primary mt-2 mb-2">{project.title}</h3>
-                    <p className="text-kinetic-on-surface-variant text-sm line-clamp-2">{project.short_description}</p>
-                  </div>
-                </Link>
-              </AnimatedSection>
+        {displayProjects.length > 0 ? (
+          <div className="grid grid-cols-12 gap-6 lg:gap-8">
+            {displayProjects.map((project, i) => (
+              <ProjectGridCard
+                key={project.id}
+                to={`/projects/${project.slug}`}
+                title={project.title}
+                category={project.category ?? 'Engineering'}
+                description={project.short_description ?? ''}
+                images={projectSlides.get(project.id) ?? (project.banner ? [project.banner] : [])}
+                layout={getProjectLayout(project.slug, i, project.is_featured)}
+                imagePosition={i % 2 === 0 ? 'left' : 'right'}
+                delay={i * 0.05}
+              />
             ))}
           </div>
         ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {caseStudiesStatic.map((cs, i) => (
-              <AnimatedSection key={cs.slug} delay={i * 0.05}>
-                <Link to={`/case-studies/${cs.slug}`} className="block border border-kinetic-outline-variant p-6 bg-white hover:border-kinetic-primary transition h-full">
-                  <span className="stitch-label">{cs.industry}</span>
-                  <h3 className="text-lg font-semibold uppercase text-kinetic-primary mt-2 mb-3">{cs.title}</h3>
-                  <p className="text-kinetic-on-surface-variant text-sm line-clamp-3">{cs.outcome}</p>
-                </Link>
-              </AnimatedSection>
-            ))}
-          </div>
+          <p className="text-center text-kinetic-on-surface-variant py-16">
+            No projects match your search. Try a different keyword or category.
+          </p>
         )}
       </PageSection>
 

@@ -1,8 +1,10 @@
 import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Search, Download, Phone, Mail, MapPin } from 'lucide-react';
 import { AnimatedSection, PageHero, SectionHeading, SEOHead, LoadingSpinner } from '../components/common';
+import CaseStudyDetailView from '../components/case-studies/CaseStudyDetailView';
+import ProjectGridCard from '../components/common/ProjectGridCard';
 import ContactForm from '../components/forms/ContactForm';
 import { BulletList, ContentPanel, ImageTextBlock, PageSection } from '../components/layout/ContentBlocks';
 import {
@@ -16,6 +18,8 @@ import {
   qualityAssurance,
   regulatoryStandards,
 } from '../data/companyContent';
+import { getCaseStudyBySlug } from '../data/caseStudiesContent';
+import { assignProjectCardSlides, getProjectLayout, getProjectVisuals } from '../data/projectsContent';
 import { caseStudiesApi, blogsApi, certificationsApi, facilitiesApi, careersApi } from '../services/api';
 import type { CaseStudy, Blog, Certification, Facility, Career } from '../types';
 
@@ -39,11 +43,16 @@ export function CaseStudiesPage() {
     queryKey: ['case-study', slug],
     queryFn: () => caseStudiesApi.getBySlug(slug!),
     enabled: !!slug,
+    retry: false,
   });
 
-  const staticCase = caseStudiesStatic.find((c) => c.slug === slug);
+  const staticCase = getCaseStudyBySlug(slug ?? '');
 
   if (slug) {
+    if (staticCase) {
+      return <CaseStudyDetailView study={staticCase} />;
+    }
+
     if (detailLoading) return <LoadingSpinner />;
     const cs: CaseStudy | undefined = detailRes?.data?.data;
 
@@ -63,22 +72,6 @@ export function CaseStudiesPage() {
       );
     }
 
-    if (staticCase) {
-      return (
-        <>
-          <SEOHead title={`${staticCase.title} | Flux Corp Case Study`} />
-          <PageHero label="Case Study" title={staticCase.title} subtitle={staticCase.industry} />
-          <PageSection>
-            <div className="max-w-4xl space-y-10">
-              <DetailSection title="Challenge"><p>{staticCase.challenge}</p></DetailSection>
-              <DetailSection title="Solution"><p>{staticCase.solution}</p></DetailSection>
-              <DetailSection title="Outcome"><p>{staticCase.outcome}</p></DetailSection>
-            </div>
-          </PageSection>
-        </>
-      );
-    }
-
     return <div className="stitch-section text-center py-20">Case study not found</div>;
   }
 
@@ -91,22 +84,32 @@ export function CaseStudiesPage() {
     title: c.title,
     industry_name: c.industry,
     outcome: c.outcome,
+    banner: getProjectVisuals(c.slug)?.banner,
   } as CaseStudy));
+
+  const caseSlides = useMemo(
+    () => assignProjectCardSlides(displayItems.map((cs) => ({ id: cs.id, slug: cs.slug, banner: cs.banner }))),
+    [displayItems],
+  );
 
   return (
     <>
       <SEOHead title="Case Studies | Flux Corp" description="Bus body lightweighting, railway coach interiors, and EV engineering success stories." />
       <PageHero label="Portfolio" title="Case Studies" subtitle="Real-world results demonstrating our integrated engineering capabilities." />
       <PageSection>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-12 gap-6 lg:gap-8">
           {displayItems.map((cs, i) => (
-            <AnimatedSection key={cs.id} delay={i * 0.08}>
-              <Link to={`/case-studies/${cs.slug}`} className="block border border-kinetic-outline-variant p-8 bg-white hover:border-kinetic-primary transition h-full">
-                <span className="stitch-label">{cs.industry_name}</span>
-                <h3 className="text-lg font-semibold uppercase text-kinetic-primary mt-2 mb-3">{cs.title}</h3>
-                <p className="text-kinetic-on-surface-variant text-sm line-clamp-4">{cs.outcome}</p>
-              </Link>
-            </AnimatedSection>
+            <ProjectGridCard
+              key={cs.id}
+              to={`/case-studies/${cs.slug}`}
+              title={cs.title}
+              category={cs.industry_name ?? 'Engineering'}
+              description={cs.outcome ?? ''}
+              images={caseSlides.get(cs.id) ?? (cs.banner ? [cs.banner] : [])}
+              layout={getProjectLayout(cs.slug, i, cs.is_featured)}
+              imagePosition={i % 2 === 0 ? 'left' : 'right'}
+              delay={i * 0.08}
+            />
           ))}
         </div>
       </PageSection>
