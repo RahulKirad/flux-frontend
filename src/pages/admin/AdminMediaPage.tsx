@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Upload, Trash2, Image as ImageIcon } from 'lucide-react';
 import { mediaApi } from '../../services/api';
+import { resolveMediaUrl } from '../../utils/mediaUrl';
 import { PageHeader, AdminCard, LoadingState, EmptyState } from '../../components/admin/shared';
 
 interface MediaItem {
@@ -69,7 +70,7 @@ export default function AdminMediaPage() {
             <AdminCard key={m.id} className="overflow-hidden group">
               <div className="aspect-square bg-gray-100 flex items-center justify-center overflow-hidden">
                 {m.file_type === 'image' ? (
-                  <img src={m.file_path} alt={m.original_name || m.filename} className="w-full h-full object-cover" />
+                  <img src={resolveMediaUrl(m.file_path)} alt={m.original_name || m.filename} className="w-full h-full object-cover" />
                 ) : (
                   <ImageIcon size={40} className="text-gray-300" />
                 )}

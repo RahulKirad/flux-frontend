@@ -17,13 +17,20 @@ import AdminProjectsPage from './pages/admin/AdminProjectsPage';
 import AdminBlogsPage from './pages/admin/AdminBlogsPage';
 import AdminMediaPage from './pages/admin/AdminMediaPage';
 import AdminSettingsPage from './pages/admin/AdminSettingsPage';
+import AdminSiteContentPage from './pages/admin/AdminSiteContentPage';
 import {
   AdminCaseStudiesPage, AdminCertificationsPage,
   AdminFacilitiesPage, AdminCareersPage,
 } from './pages/admin/AdminCrudPages';
 
 const queryClient = new QueryClient({
-  defaultOptions: { queries: { retry: 1, staleTime: 5 * 60 * 1000 } },
+  defaultOptions: {
+    queries: {
+      retry: 1,
+      staleTime: 5 * 60 * 1000,
+      refetchOnWindowFocus: false,
+    },
+  },
 });
 
 export default function App() {
@@ -65,6 +72,7 @@ export default function App() {
               <Route path="facilities" element={<AdminFacilitiesPage />} />
               <Route path="careers" element={<AdminCareersPage />} />
               <Route path="leads" element={<AdminLeadsPage />} />
+              <Route path="site-content" element={<AdminSiteContentPage />} />
               <Route path="media" element={<AdminMediaPage />} />
               <Route path="settings" element={<AdminSettingsPage />} />
             </Route>

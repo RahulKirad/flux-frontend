@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Outlet, NavLink, Navigate, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard, Briefcase, FolderOpen, Award, Building2,
-  Users, MessageSquare, Image, Settings, LogOut, Menu, BookOpen, PenTool,
+  Users, MessageSquare, Image, Settings, LogOut, Menu, BookOpen, PenTool, Layout,
 } from 'lucide-react';
 import { useAuth } from '../store/AuthContext';
 import FluxLogo from '../components/common/FluxLogo';
@@ -17,6 +17,7 @@ const sidebarLinks = [
   { label: 'Facilities', path: '/admin/facilities', icon: Building2 },
   { label: 'Careers', path: '/admin/careers', icon: Users },
   { label: 'Leads', path: '/admin/leads', icon: MessageSquare },
+  { label: 'Site Content', path: '/admin/site-content', icon: Layout },
   { label: 'Media', path: '/admin/media', icon: Image },
   { label: 'Settings', path: '/admin/settings', icon: Settings },
 ];
@@ -108,10 +109,14 @@ export function AdminLoginPage() {
     setError('');
     setLoading(true);
     try {
-      await login(email, password);
+      await login(email.trim(), password);
       navigate('/admin');
-    } catch {
-      setError('Invalid email or password');
+    } catch (err: unknown) {
+      const msg =
+        err && typeof err === 'object' && 'response' in err
+          ? (err as { response?: { data?: { message?: string } } }).response?.data?.message
+          : undefined;
+      setError(msg === 'Validation failed' ? 'Enter username admin or your email, and password.' : (msg || 'Invalid username or password'));
     } finally {
       setLoading(false);
     }
@@ -132,12 +137,13 @@ export function AdminLoginPage() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Username or email</label>
             <input
-              type="email"
+              type="text"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="admin@fluxcorp.com"
+              placeholder="admin"
+              autoComplete="username"
               className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
               required
             />
@@ -148,6 +154,7 @@ export function AdminLoginPage() {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
               className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
               required
             />

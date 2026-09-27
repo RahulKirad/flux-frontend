@@ -18,6 +18,8 @@ import {
   servicesContent,
 } from '../data/companyContent';
 import { servicesApi, settingsApi } from '../services/api';
+import { useSiteContent } from '../hooks/useSiteContent';
+import { resolveMediaUrl } from '../utils/mediaUrl';
 import type { Service } from '../types';
 
 const serviceIcons: Record<string, React.ElementType> = {
@@ -36,6 +38,7 @@ const bentoIndustries = [
     title: 'Automotive',
     slug: 'automotive',
     description: 'Passenger vehicles, EV platforms, and construction equipment components.',
+    imageKey: 'industry.automotive.image',
     image: 'https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=1200&q=80',
     span: 'md:col-span-12 lg:col-span-8',
     height: 'min-h-[240px] sm:min-h-[280px] lg:min-h-[320px] xl:min-h-[380px]',
@@ -44,6 +47,7 @@ const bentoIndustries = [
     title: 'Commercial Vehicles',
     slug: 'commercial-vehicles',
     description: 'Bus body manufacturing and fleet lightweighting at scale.',
+    imageKey: 'industry.commercial-vehicles.image',
     image: 'https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=800&q=80',
     span: 'md:col-span-12 lg:col-span-4',
     height: 'min-h-[240px] sm:min-h-[280px] lg:min-h-[320px] xl:min-h-[380px]',
@@ -52,6 +56,7 @@ const bentoIndustries = [
     title: 'Electric Vehicles',
     slug: 'electric-vehicles',
     description: 'EV platform design and lightweighting solutions.',
+    imageKey: 'industry.electric-vehicles.image',
     image: electricVehiclesImage,
     span: 'md:col-span-6 lg:col-span-4 xl:col-span-4 bento-row-span-2',
     height: 'min-h-[240px] sm:min-h-[280px] lg:min-h-[520px] xl:min-h-[520px]',
@@ -61,6 +66,7 @@ const bentoIndustries = [
     title: 'Railways',
     slug: 'railways',
     description: 'RDSO-certified railway component manufacturing.',
+    imageKey: 'industry.railways.image',
     image: railwaysImage,
     span: 'md:col-span-6 lg:col-span-8',
     height: 'min-h-[240px] sm:min-h-[280px] lg:min-h-[320px] xl:min-h-[400px]',
@@ -70,6 +76,7 @@ const bentoIndustries = [
     title: 'Industrial Equipment',
     slug: 'industrial-equipment',
     description: 'Heavy machinery and industrial component engineering.',
+    imageKey: 'industry.industrial-equipment.image',
     image: industrialEquipmentImage,
     span: 'md:col-span-12 lg:col-span-8',
     height: 'min-h-[260px] sm:min-h-[300px] lg:min-h-[340px] xl:min-h-[380px]',
@@ -96,6 +103,12 @@ const bentoIndustries = [
 export default function HomePage() {
   const { data: servicesRes } = useQuery({ queryKey: ['services-main'], queryFn: () => servicesApi.getAll({ main: 'true' }) });
   const { data: settingsRes } = useQuery({ queryKey: ['settings-public'], queryFn: () => settingsApi.getPublic() });
+  const { data: siteContent } = useSiteContent();
+
+  const asset = (key: string | undefined, fallback: string) => {
+    if (key && siteContent?.assets?.[key]) return resolveMediaUrl(siteContent.assets[key]) || fallback;
+    return fallback;
+  };
 
   const services: Service[] = servicesRes?.data?.data || [];
   const stats = settingsRes?.data?.data?.statistics || {};
@@ -128,13 +141,14 @@ export default function HomePage() {
         <PageSection>
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <AnimatedSection>
-              <span className="stitch-label block mb-4">About Flux Corp</span>
+              <span className="stitch-label block mb-4">{siteContent?.home?.aboutLabel || 'About Flux Corp'}</span>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-kinetic-primary leading-tight uppercase mb-6 text-balance">
-                Integrated Engineering
-                <br />
-                Solutions.
+                {siteContent?.home?.aboutTitle || 'Integrated Engineering Solutions.'}
               </h2>
-              {about.overview.map((p) => (
+              {(siteContent?.home?.aboutBody
+                ? siteContent.home.aboutBody.split('\n').filter(Boolean)
+                : about.overview
+              ).map((p) => (
                 <p key={p.slice(0, 40)} className="text-kinetic-on-surface-variant leading-relaxed mb-4 last:mb-0">
                   {p}
                 </p>
@@ -146,7 +160,7 @@ export default function HomePage() {
             <AnimatedSection delay={0.15}>
               <div className="relative min-h-[280px] sm:min-h-[320px] lg:min-h-[400px] xl:min-h-[480px] border border-kinetic-outline-variant overflow-hidden">
                 <img
-                  src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1000&q=80"
+                  src={asset('home.about.image', 'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=1000&q=80')}
                   alt="Flux Corp engineering facility"
                   className="absolute inset-0 w-full h-full object-cover"
                 />
@@ -223,7 +237,7 @@ export default function HomePage() {
                   className={`group relative block w-full h-full overflow-hidden border border-kinetic-outline-variant ${item.height}`}
                 >
                   <img
-                    src={item.image}
+                    src={asset(item.imageKey, String(item.image))}
                     alt={item.title}
                     className={`absolute inset-0 w-full h-full min-h-full transition-transform duration-700 group-hover:scale-105 ${item.imageClass ?? 'object-cover'}`}
                     loading="lazy"

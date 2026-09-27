@@ -85,7 +85,7 @@ body {
 
 .hero-video-area {
   @apply relative;
-  min-height: clamp(360px, 52vh, 560px);
+  min-height: clamp(480px, 68vh, 720px);
   height: auto;
 }
 

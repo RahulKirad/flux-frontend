@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Users, FolderOpen, PenTool, MessageSquare, TrendingUp, Briefcase } from 'lucide-react';
 import { settingsApi, leadsApi } from '../../services/api';
@@ -89,11 +90,26 @@ export default function AdminDashboard() {
   );
 }
 
+type LeadRow = {
+  id: number;
+  name: string;
+  email: string;
+  phone?: string;
+  company?: string;
+  source: string;
+  status: string;
+  message?: string;
+  service_title?: string;
+  created_at: string;
+};
+
 export function AdminLeadsPage() {
   const qc = useQueryClient();
+  const [selected, setSelected] = useState<LeadRow | null>(null);
   const { data, isLoading } = useQuery({
     queryKey: ['admin-leads'],
-    queryFn: () => leadsApi.getAll(),
+    queryFn: () => leadsApi.getAll({ limit: '200' }),
+    staleTime: 60_000,
   });
 
   const updateStatus = useMutation({
@@ -118,44 +134,76 @@ export function AdminLeadsPage() {
   return (
     <div>
       <PageHeader
-        title="Lead Management"
-        description="Track and manage incoming leads"
-        action={<button onClick={handleExport} className="btn-primary text-sm">Export Excel</button>}
+        title="Consultations & leads"
+        description="Engineering consultation requests from service pages and contact forms"
+        action={<button type="button" onClick={handleExport} className="btn-primary text-sm">Export Excel</button>}
       />
-      <AdminCard className="overflow-hidden">
-        <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b">
-            <tr>
-              <th className="text-left px-4 py-3 font-medium text-gray-600">Name</th>
-              <th className="text-left px-4 py-3 font-medium text-gray-600">Email</th>
-              <th className="text-left px-4 py-3 font-medium text-gray-600">Company</th>
-              <th className="text-left px-4 py-3 font-medium text-gray-600">Source</th>
-              <th className="text-left px-4 py-3 font-medium text-gray-600">Status</th>
-              <th className="text-left px-4 py-3 font-medium text-gray-600">Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            {leads.map((lead: { id: number; name: string; email: string; company?: string; source: string; status: string; created_at: string }) => (
-              <tr key={lead.id} className="border-b border-gray-50 hover:bg-gray-50">
-                <td className="px-4 py-3 font-medium">{lead.name}</td>
-                <td className="px-4 py-3 text-gray-600">{lead.email}</td>
-                <td className="px-4 py-3 text-gray-500">{lead.company || '—'}</td>
-                <td className="px-4 py-3"><span className="text-xs bg-gray-100 px-2 py-1 rounded">{lead.source.replace(/_/g, ' ')}</span></td>
-                <td className="px-4 py-3">
-                  <select
-                    value={lead.status}
-                    onChange={(e) => updateStatus.mutate({ id: lead.id, status: e.target.value })}
-                    className="text-xs border border-gray-200 rounded-lg px-2 py-1 capitalize"
-                  >
-                    {statuses.map((s) => <option key={s} value={s}>{s}</option>)}
-                  </select>
-                </td>
-                <td className="px-4 py-3 text-gray-500">{new Date(lead.created_at).toLocaleDateString()}</td>
+
+      <div className="grid lg:grid-cols-3 gap-6">
+        <AdminCard className="lg:col-span-2 overflow-x-auto">
+          <table className="w-full text-sm min-w-[640px]">
+            <thead className="bg-gray-50 border-b">
+              <tr>
+                <th className="text-left px-4 py-3 font-medium text-gray-600">Name</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-600">Service</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-600">Phone</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-600">Status</th>
+                <th className="text-left px-4 py-3 font-medium text-gray-600">Date</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
-      </AdminCard>
+            </thead>
+            <tbody>
+              {(leads as LeadRow[]).map((lead) => (
+                <tr
+                  key={lead.id}
+                  onClick={() => setSelected(lead)}
+                  className={`border-b border-gray-50 hover:bg-gray-50 cursor-pointer ${selected?.id === lead.id ? 'bg-primary-50' : ''}`}
+                >
+                  <td className="px-4 py-3">
+                    <p className="font-medium">{lead.name}</p>
+                    <p className="text-xs text-gray-500">{lead.email}</p>
+                  </td>
+                  <td className="px-4 py-3 text-xs text-gray-600 max-w-[140px] truncate">
+                    {lead.service_title || lead.source.replace(/_/g, ' ')}
+                  </td>
+                  <td className="px-4 py-3 text-gray-600">{lead.phone || '—'}</td>
+                  <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                    <select
+                      value={lead.status}
+                      onChange={(e) => updateStatus.mutate({ id: lead.id, status: e.target.value })}
+                      className="text-xs border border-gray-200 rounded-lg px-2 py-1 capitalize"
+                    >
+                      {statuses.map((s) => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </td>
+                  <td className="px-4 py-3 text-gray-500 whitespace-nowrap">{new Date(lead.created_at).toLocaleString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {leads.length === 0 && <p className="p-8 text-center text-gray-400 text-sm">No leads yet. Submissions appear when the API and database are connected.</p>}
+        </AdminCard>
+
+        <AdminCard className="p-6 h-fit sticky top-24">
+          {selected ? (
+            <div className="space-y-4 text-sm">
+              <h3 className="font-semibold text-gray-900 text-lg">{selected.name}</h3>
+              <p><span className="text-gray-500">Email:</span> {selected.email}</p>
+              <p><span className="text-gray-500">Phone:</span> {selected.phone || '—'}</p>
+              <p><span className="text-gray-500">Company:</span> {selected.company || '—'}</p>
+              <p><span className="text-gray-500">Source:</span> {selected.source}</p>
+              {selected.service_title && <p><span className="text-gray-500">Service:</span> {selected.service_title}</p>}
+              <div>
+                <p className="text-gray-500 mb-1">Project details</p>
+                <p className="whitespace-pre-wrap text-gray-800 bg-gray-50 border rounded-lg p-3 text-xs leading-relaxed max-h-64 overflow-y-auto">
+                  {selected.message || '—'}
+                </p>
+              </div>
+            </div>
+          ) : (
+            <p className="text-gray-400 text-sm">Select a row to view full consultation details.</p>
+          )}
+        </AdminCard>
+      </div>
     </div>
   );
 }

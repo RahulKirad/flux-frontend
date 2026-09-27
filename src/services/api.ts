@@ -111,10 +111,17 @@ export const settingsApi = {
   update: (data: Record<string, string>) => api.put('/settings', data),
 };
 
+export const siteContentApi = {
+  getPublic: () => api.get('/site-content'),
+  getAdmin: () => api.get('/site-content/admin'),
+  update: (data: object) => api.put('/site-content', data),
+};
+
 export const mediaApi = {
   getAll: (params?: Record<string, string>) => api.get('/media', { params }),
-  upload: (formData: FormData) => api.post('/media/upload', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' },
-  }),
+  upload: (formData: FormData, folder?: string) =>
+    api.post(`/media/upload${folder ? `?folder=${encodeURIComponent(folder)}` : ''}`, formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    }),
   delete: (id: number) => api.delete(`/media/${id}`),
 };

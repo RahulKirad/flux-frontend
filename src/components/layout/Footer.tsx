@@ -80,6 +80,7 @@ export default function Footer() {
         <div className="stitch-container py-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-sm text-white/40">&copy; {new Date().getFullYear()} {company.name}. All rights reserved.</p>
           <div className="flex items-center gap-4 text-sm">
+            <Link to="/admin" className="text-white/40 hover:text-white transition">Staff login</Link>
             <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">LinkedIn</a>
             <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">Twitter</a>
             <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" className="hover:text-white transition">YouTube</a>
