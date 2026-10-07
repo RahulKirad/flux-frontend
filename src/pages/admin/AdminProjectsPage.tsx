@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { projectsApi } from '../../services/api';
 import { PageHeader, AdminCard, Modal, FormField, inputClass, LoadingState, EmptyState, slugify } from '../../components/admin/shared';
+import { ChartPanel, KpiGrid, LiveBar, LiveDoughnut, LivePolar, LiveRadar, countsFrom } from '../../components/admin/charts';
 
 interface Project {
   id: number;
@@ -64,13 +65,55 @@ export default function AdminProjectsPage() {
     <div>
       <PageHeader
         title="Projects"
-        description="Manage portfolio projects"
+        description="Live portfolio inventory"
         action={
           <button onClick={() => { setEditId(null); setForm(empty); setOpen(true); }} className="btn-primary text-sm flex items-center gap-2">
             <Plus size={16} /> Add Project
           </button>
         }
       />
+
+      <KpiGrid
+        items={[
+          { label: 'Total', value: projects.length },
+          { label: 'Active', value: projects.filter((p) => p.is_active).length },
+          { label: 'Featured', value: projects.filter((p) => p.is_featured).length },
+          { label: 'Categories', value: new Set(projects.map((p) => p.category || 'Uncategorised')).size },
+        ]}
+      />
+      <div className="grid md:grid-cols-2 gap-4 mb-6">
+        <ChartPanel title="Category polar">
+          <LivePolar
+            labels={countsFrom(projects as unknown as Record<string, unknown>[], 'category').map((x) => x.label)}
+            values={countsFrom(projects as unknown as Record<string, unknown>[], 'category').map((x) => x.value)}
+          />
+        </ChartPanel>
+        <ChartPanel title="Featured doughnut">
+          <LiveDoughnut
+            labels={['Featured', 'Standard']}
+            values={[projects.filter((p) => p.is_featured).length, projects.filter((p) => !p.is_featured).length]}
+          />
+        </ChartPanel>
+        <ChartPanel title="Category bars">
+          <LiveBar
+            label="Projects"
+            labels={countsFrom(projects as unknown as Record<string, unknown>[], 'category').map((x) => x.label)}
+            values={countsFrom(projects as unknown as Record<string, unknown>[], 'category').map((x) => x.value)}
+          />
+        </ChartPanel>
+        <ChartPanel title="Health radar">
+          <LiveRadar
+            label="Count"
+            labels={['Total', 'Active', 'Featured', 'Inactive']}
+            values={[
+              projects.length,
+              projects.filter((p) => p.is_active).length,
+              projects.filter((p) => p.is_featured).length,
+              projects.filter((p) => !p.is_active).length,
+            ]}
+          />
+        </ChartPanel>
+      </div>
 
       <AdminCard className="overflow-hidden">
         <table className="w-full text-sm">

@@ -2,7 +2,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { Search, Download, Phone, Mail, MapPin } from 'lucide-react';
-import { AnimatedSection, PageHero, SectionHeading, SEOHead, LoadingSpinner } from '../components/common';
+import { AnimatedSection, PageHero, CmsPageHero, SectionHeading, SEOHead, LoadingSpinner } from '../components/common';
 import CaseStudyDetailView from '../components/case-studies/CaseStudyDetailView';
 import ProjectGridCard from '../components/common/ProjectGridCard';
 import ContactForm from '../components/forms/ContactForm';
@@ -95,7 +95,7 @@ export function CaseStudiesPage() {
   return (
     <>
       <SEOHead title="Case Studies | Flux Corp" description="Bus body lightweighting, railway coach interiors, and EV engineering success stories." />
-      <PageHero label="Portfolio" title="Case Studies" subtitle="Real-world results demonstrating our integrated engineering capabilities." />
+      <CmsPageHero pageId="case-studies" />
       <PageSection>
         <div className="grid grid-cols-12 gap-6 lg:gap-8">
           {displayItems.map((cs, i) => (
@@ -166,7 +166,7 @@ export function BlogPage() {
   return (
     <>
       <SEOHead title="Blog | Flux Corp" description="Technical insights on composites, railway compliance, prototyping, and bus body manufacturing." />
-      <PageHero label="Insights" title="Engineering Blog" subtitle="In-depth articles for engineers, procurement professionals, and decision-makers." />
+      <CmsPageHero pageId="blog" />
       <PageSection>
         <div className="relative max-w-md mb-10">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-kinetic-outline" size={20} />
@@ -208,7 +208,7 @@ export function CertificationsPage() {
   return (
     <>
       <SEOHead title="Certifications | Flux Corp" description="ISO 9001, IATF 16949, RDSO, RITES — quality and regulatory compliance credentials." />
-      <PageHero label="Compliance" title="Certifications & Standards" subtitle="Quality, safety, and regulatory approvals for automotive and railway manufacturing." />
+      <CmsPageHero pageId="certifications" />
 
       <PageSection>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
@@ -309,7 +309,7 @@ export function FacilitiesPage() {
   return (
     <>
       <SEOHead title="Facilities | Flux Corp" description="Chikhali manufacturing and Chakan design & prototyping facilities in Pune." />
-      <PageHero label="Manufacturing" title="Our Facilities" subtitle="State-of-the-art equipment in Chikhali and Chakan, Pune — scalable from prototype to production." />
+      <CmsPageHero pageId="facilities" />
       <PageSection>
         <div className="grid md:grid-cols-2 gap-8 mb-16">
           {displayFacilities.map((f, i) => {
@@ -405,7 +405,7 @@ export function CareersPage() {
   return (
     <>
       <SEOHead title="Careers | Flux Corp" description="Join our engineering, composites, and manufacturing teams in Pune." />
-      <PageHero label="Careers" title="Build With Us" subtitle="Join a team delivering integrated engineering for mobility and infrastructure." />
+      <CmsPageHero pageId="careers" />
       <PageSection>
         <div className="space-y-4 max-w-4xl">
           {displayCareers.map((job, i) => (
@@ -429,7 +429,7 @@ export function ContactPage() {
   return (
     <>
       <SEOHead title="Contact | Flux Corp" description={`Contact Flux Corp — ${company.phone}, ${company.email}, Chikhali & Chakan, Pune.`} />
-      <PageHero label="Contact" title="Get In Touch" subtitle="Project consultations, technical inquiries, and partnership opportunities." />
+      <CmsPageHero pageId="contact" />
 
       <PageSection>
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20">

@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { blogsApi } from '../../services/api';
 import { PageHeader, AdminCard, Modal, FormField, inputClass, LoadingState, EmptyState, slugify } from '../../components/admin/shared';
+import { ChartPanel, KpiGrid, LiveDoughnut, LivePolar, LiveRadar, LiveBar, countsFrom } from '../../components/admin/charts';
 
 interface Blog {
   id: number;
@@ -71,13 +72,56 @@ export default function AdminBlogsPage() {
     <div>
       <PageHeader
         title="Blog Posts"
-        description="Create and publish blog articles"
+        description="Live editorial mix from the CMS"
         action={
           <button onClick={() => { setEditId(null); setForm(empty); setOpen(true); }} className="btn-primary text-sm flex items-center gap-2">
             <Plus size={16} /> New Post
           </button>
         }
       />
+
+      <KpiGrid
+        items={[
+          { label: 'Total', value: blogs.length },
+          { label: 'Published', value: blogs.filter((b) => b.is_published).length },
+          { label: 'Drafts', value: blogs.filter((b) => !b.is_published).length },
+          { label: 'Featured', value: blogs.filter((b) => b.is_featured).length },
+        ]}
+      />
+      <div className="grid md:grid-cols-2 gap-4 mb-6">
+        <ChartPanel title="Publish doughnut">
+          <LiveDoughnut
+            labels={['Published', 'Draft']}
+            values={[blogs.filter((b) => b.is_published).length, blogs.filter((b) => !b.is_published).length]}
+          />
+        </ChartPanel>
+        <ChartPanel title="Category polar">
+          <LivePolar
+            labels={countsFrom(blogs as unknown as Record<string, unknown>[], 'category_name').map((x) => x.label)}
+            values={countsFrom(blogs as unknown as Record<string, unknown>[], 'category_name').map((x) => x.value)}
+          />
+        </ChartPanel>
+        <ChartPanel title="Editorial radar">
+          <LiveRadar
+            label="Posts"
+            labels={['Total', 'Published', 'Drafts', 'Featured']}
+            values={[
+              blogs.length,
+              blogs.filter((b) => b.is_published).length,
+              blogs.filter((b) => !b.is_published).length,
+              blogs.filter((b) => b.is_featured).length,
+            ]}
+          />
+        </ChartPanel>
+        <ChartPanel title="Category bars">
+          <LiveBar
+            horizontal
+            label="Posts"
+            labels={countsFrom(blogs as unknown as Record<string, unknown>[], 'category_name').map((x) => x.label)}
+            values={countsFrom(blogs as unknown as Record<string, unknown>[], 'category_name').map((x) => x.value)}
+          />
+        </ChartPanel>
+      </div>
 
       <AdminCard className="overflow-hidden">
         <table className="w-full text-sm">

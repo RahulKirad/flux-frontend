@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { motion, useInView } from 'framer-motion';
 import GraphiteBackground from './GraphiteBackground';
 import HeroGalaxyStars from './HeroGalaxyStars';
+import { useCmsPage } from '../../hooks/useSiteContent';
+import type { WebsitePageId } from '../../data/adminPages';
 
 interface AnimatedSectionProps {
   children: React.ReactNode;
@@ -54,6 +56,7 @@ export function PageHero({
   title,
   subtitle,
   label,
+  background,
 }: {
   title: string;
   subtitle?: string;
@@ -62,8 +65,17 @@ export function PageHero({
 }) {
   return (
     <section className="page-hero galaxy-host">
-      <GraphiteBackground />
-      <HeroGalaxyStars />
+      {background ? (
+        <>
+          <img src={background} alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-[#101820]/70" />
+        </>
+      ) : (
+        <>
+          <GraphiteBackground />
+          <HeroGalaxyStars />
+        </>
+      )}
       <div className="stitch-container-home relative z-10">
         {label && (
           <motion.span
@@ -164,4 +176,25 @@ export function SEOHead({
     }
   }, [title, description, keywords]);
   return null;
+}
+
+export function CmsPageHero({ pageId }: { pageId: WebsitePageId }) {
+  const copy = useCmsPage(pageId);
+  return (
+    <>
+      <PageHero
+        label={copy.label}
+        title={copy.title}
+        subtitle={copy.subtitle}
+        background={copy.bannerImage || undefined}
+      />
+      {copy.body ? (
+        <section className="stitch-section bg-white">
+          <div className="stitch-container">
+            <p className="text-kinetic-on-surface-variant leading-relaxed max-w-3xl whitespace-pre-line">{copy.body}</p>
+          </div>
+        </section>
+      ) : null}
+    </>
+  );
 }

@@ -1,90 +1,144 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { Users, FolderOpen, PenTool, MessageSquare, TrendingUp, Briefcase } from 'lucide-react';
-import { settingsApi, leadsApi } from '../../services/api';
+import { settingsApi, leadsApi, servicesApi, projectsApi, mediaApi } from '../../services/api';
 import { PageHeader, AdminCard, LoadingState } from '../../components/admin/shared';
+import {
+  ChartPanel,
+  KpiGrid,
+  LiveDoughnut,
+  LiveLine,
+  LivePolar,
+  LiveRadar,
+  LiveBar,
+  LivePie,
+  countsFrom,
+  num,
+} from '../../components/admin/charts';
+
+type DashLead = { id: number; name: string; email: string; source: string; status: string; created_at: string };
+type StatusCount = { status: string; count: number | string };
+type MonthCount = { month: string; count: number | string };
 
 export default function AdminDashboard() {
   const { data, isLoading } = useQuery({
     queryKey: ['dashboard'],
     queryFn: () => settingsApi.getDashboard(),
   });
+  const servicesQ = useQuery({ queryKey: ['admin-services'], queryFn: () => servicesApi.getAll() });
+  const projectsQ = useQuery({ queryKey: ['admin-projects'], queryFn: () => projectsApi.getAll({ limit: '200' }) });
+  const mediaQ = useQuery({ queryKey: ['admin-media'], queryFn: () => mediaApi.getAll({ limit: '200' }) });
 
   if (isLoading) return <LoadingState />;
 
   const stats = data?.data?.data;
+  const services = (servicesQ.data?.data?.data || []) as { is_active?: number; is_featured?: number; parent_id?: number | null }[];
+  const projects = (projectsQ.data?.data?.data || []) as { is_active?: number; is_featured?: number; category?: string }[];
+  const media = (mediaQ.data?.data?.data || []) as { file_type?: string }[];
 
-  const cards = [
-    { label: 'Total Leads', value: stats?.leads?.total || 0, icon: MessageSquare, color: 'bg-blue-500' },
-    { label: 'New Leads', value: stats?.leads?.new_leads || 0, icon: TrendingUp, color: 'bg-green-500' },
-    { label: 'Projects', value: stats?.projects || 0, icon: FolderOpen, color: 'bg-purple-500' },
-    { label: 'Published Blogs', value: stats?.blogs || 0, icon: PenTool, color: 'bg-orange-500' },
-    { label: 'Unread Inquiries', value: stats?.unreadInquiries || 0, icon: Briefcase, color: 'bg-red-500' },
-    { label: 'New Applications', value: stats?.newApplications || 0, icon: Users, color: 'bg-teal-500' },
-  ];
+  const leadsByStatus = (stats?.leadsByStatus || []) as StatusCount[];
+  const leadsByMonth = (stats?.leadsByMonth || []) as MonthCount[];
+  const recentLeads = (stats?.recentLeads || []) as DashLead[];
+
+  const totalLeads = num(stats?.leads?.total);
+  const newLeads = num(stats?.leads?.new_leads);
+  const conversion = totalLeads ? Math.round((num(stats?.leads?.won ?? 0) / totalLeads) * 100) : 0;
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Dashboard</h1>
+      <PageHeader
+        title="Command dashboard"
+        description="Live operations snapshot from MySQL — no placeholder metrics"
+      />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-        {cards.map((card) => (
-          <div key={card.label} className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-500">{card.label}</p>
-                <p className="text-3xl font-bold text-gray-900 mt-1">{card.value}</p>
-              </div>
-              <div className={`w-12 h-12 ${card.color} rounded-xl flex items-center justify-center`}>
-                <card.icon className="text-white" size={24} />
-              </div>
-            </div>
-          </div>
-        ))}
+      <KpiGrid
+        items={[
+          { label: 'Leads', value: totalLeads, hint: `${newLeads} new in pipeline` },
+          { label: 'Projects', value: num(stats?.projects), hint: 'Active records' },
+          { label: 'Published blogs', value: num(stats?.blogs) },
+          { label: 'Applications', value: num(stats?.newApplications), hint: `${num(stats?.unreadInquiries)} unread inquiries` },
+        ]}
+      />
+
+      <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
+        <ChartPanel title="Lead intake" subtitle="Last 6 months (live)">
+          <LiveLine
+            label="Leads"
+            labels={leadsByMonth.map((m) => m.month)}
+            values={leadsByMonth.map((m) => num(m.count))}
+          />
+        </ChartPanel>
+        <ChartPanel title="Pipeline mix" subtitle="Leads by status">
+          <LiveDoughnut
+            labels={leadsByStatus.map((s) => s.status)}
+            values={leadsByStatus.map((s) => num(s.count))}
+          />
+        </ChartPanel>
+        <ChartPanel title="Pipeline polar" subtitle="Status volume">
+          <LivePolar
+            labels={leadsByStatus.map((s) => s.status)}
+            values={leadsByStatus.map((s) => num(s.count))}
+          />
+        </ChartPanel>
+        <ChartPanel title="Content radar" subtitle="Live CMS inventory">
+          <LiveRadar
+            label="Records"
+            labels={['Services', 'Projects', 'Blogs', 'Media', 'Leads']}
+            values={[services.length, projects.length, num(stats?.blogs), media.length, totalLeads]}
+          />
+        </ChartPanel>
+        <ChartPanel title="Service composition" subtitle="Main vs sub vs featured">
+          <LiveBar
+            label="Count"
+            labels={['Main', 'Sub-service', 'Featured', 'Inactive']}
+            values={[
+              services.filter((s) => !s.parent_id).length,
+              services.filter((s) => s.parent_id).length,
+              services.filter((s) => s.is_featured).length,
+              services.filter((s) => !s.is_active).length,
+            ]}
+          />
+        </ChartPanel>
+        <ChartPanel title="Media types" subtitle="Library by file type">
+          <LiveDoughnut
+            labels={['image', 'video', 'document', 'other']}
+            values={['image', 'video', 'document', 'other'].map(
+              (t) => media.filter((m) => (m.file_type || 'other') === t).length,
+            )}
+          />
+        </ChartPanel>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <h2 className="text-lg font-semibold mb-4">Recent Leads</h2>
+      <div className="grid lg:grid-cols-2 gap-4">
+        <AdminCard className="p-5">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-700 mb-3">Latest consultations</h2>
           <div className="space-y-3">
-            {(stats?.recentLeads || []).map((lead: { id: number; name: string; email: string; source: string; status: string; created_at: string }) => (
-              <div key={lead.id} className="flex items-center justify-between py-2 border-b border-gray-50 last:border-0">
+            {recentLeads.map((lead) => (
+              <div key={lead.id} className="flex items-center justify-between py-2 border-b border-slate-100 last:border-0">
                 <div>
-                  <p className="font-medium text-sm">{lead.name}</p>
-                  <p className="text-xs text-gray-500">{lead.email}</p>
+                  <p className="font-medium text-sm text-slate-900">{lead.name}</p>
+                  <p className="text-xs text-slate-500">{lead.email}</p>
                 </div>
-                <span className={`text-xs px-2 py-1 rounded-full ${
-                  lead.status === 'new' ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-600'
-                }`}>
+                <span className="text-[10px] uppercase tracking-wide px-2 py-1 rounded-full bg-amber-100 text-amber-900">
                   {lead.status}
                 </span>
               </div>
             ))}
-            {(!stats?.recentLeads || stats.recentLeads.length === 0) && (
-              <p className="text-gray-400 text-sm">No leads yet</p>
+            {recentLeads.length === 0 && <p className="text-slate-400 text-sm">No live leads in the database yet.</p>}
+          </div>
+          {totalLeads > 0 && (
+            <p className="text-xs text-slate-500 mt-4">Won rate from live statuses: {conversion}%</p>
+          )}
+        </AdminCard>
+        <ChartPanel title="Project categories" subtitle="From live project records">
+          <LiveBar
+            horizontal
+            label="Projects"
+            labels={[...new Set(projects.map((p) => p.category || 'Uncategorised'))]}
+            values={[...new Set(projects.map((p) => p.category || 'Uncategorised'))].map(
+              (c) => projects.filter((p) => (p.category || 'Uncategorised') === c).length,
             )}
-          </div>
-        </div>
-
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <h2 className="text-lg font-semibold mb-4">Leads by Status</h2>
-          <div className="space-y-3">
-            {(stats?.leadsByStatus || []).map((item: { status: string; count: number }) => (
-              <div key={item.status} className="flex items-center justify-between">
-                <span className="text-sm capitalize text-gray-600">{item.status}</span>
-                <div className="flex items-center gap-3">
-                  <div className="w-32 h-2 bg-gray-100 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-primary-500 rounded-full"
-                      style={{ width: `${Math.min(100, (item.count / (stats?.leads?.total || 1)) * 100)}%` }}
-                    />
-                  </div>
-                  <span className="text-sm font-medium w-8 text-right">{item.count}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+          />
+        </ChartPanel>
       </div>
     </div>
   );
@@ -127,7 +181,9 @@ export function AdminLeadsPage() {
   };
 
   if (isLoading) return <LoadingState />;
-  const leads = data?.data?.data || [];
+  const leads = (data?.data?.data || []) as LeadRow[];
+  const byStatus = countsFrom(leads as unknown as Record<string, unknown>[], 'status');
+  const bySource = countsFrom(leads as unknown as Record<string, unknown>[], 'source');
 
   const statuses = ['new', 'contacted', 'qualified', 'proposal', 'negotiation', 'won', 'lost'];
 
@@ -135,9 +191,27 @@ export function AdminLeadsPage() {
     <div>
       <PageHeader
         title="Consultations & leads"
-        description="Engineering consultation requests from service pages and contact forms"
+        description="Live submissions from the website — charts update from the API"
         action={<button type="button" onClick={handleExport} className="btn-primary text-sm">Export Excel</button>}
       />
+
+      <KpiGrid
+        items={[
+          { label: 'Total', value: leads.length },
+          { label: 'New', value: leads.filter((l) => l.status === 'new').length },
+          { label: 'Won', value: leads.filter((l) => l.status === 'won').length },
+          { label: 'Lost', value: leads.filter((l) => l.status === 'lost').length },
+        ]}
+      />
+
+      <div className="grid md:grid-cols-2 gap-4 mb-6">
+        <ChartPanel title="Status mix" subtitle="Live lead statuses">
+          <LivePie labels={byStatus.map((x) => x.label)} values={byStatus.map((x) => x.value)} />
+        </ChartPanel>
+        <ChartPanel title="Intake source" subtitle="How consultations arrived">
+          <LiveBar horizontal label="Leads" labels={bySource.map((x) => x.label)} values={bySource.map((x) => x.value)} />
+        </ChartPanel>
+      </div>
 
       <div className="grid lg:grid-cols-3 gap-6">
         <AdminCard className="lg:col-span-2 overflow-x-auto">

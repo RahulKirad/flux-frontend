@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { PageHeader, AdminCard, Modal, FormField, inputClass, LoadingState, EmptyState, slugify } from '../../components/admin/shared';
+import { ChartPanel, KpiGrid, LivePie, LiveBar, LivePolar, LiveDoughnut, LiveRadar, countsFrom } from '../../components/admin/charts';
 
 type CrudApi = {
   getAll: () => Promise<{ data: { data: Record<string, unknown>[] } }>;
@@ -17,9 +18,11 @@ interface CrudPageProps {
   apiClient: CrudApi;
   fields: { key: string; label: string; required?: boolean; textarea?: boolean }[];
   columns: { key: string; label: string }[];
+  groupBy?: string;
+  insights?: (items: Record<string, unknown>[]) => ReactNode;
 }
 
-export function CrudAdminPage({ title, description, queryKey, apiClient, fields, columns }: CrudPageProps) {
+export function CrudAdminPage({ title, description, queryKey, apiClient, fields, columns, groupBy, insights }: CrudPageProps) {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [editId, setEditId] = useState<number | null>(null);
@@ -69,6 +72,17 @@ export function CrudAdminPage({ title, description, queryKey, apiClient, fields,
           </button>
         }
       />
+      <KpiGrid items={[{ label: 'Live records', value: items.length }]} />
+      {insights ? insights(items) : groupBy ? (
+        <div className="grid md:grid-cols-2 gap-4 mb-6">
+          <ChartPanel title={`By ${groupBy.replace(/_/g, ' ')}`}>
+            <LivePie
+              labels={countsFrom(items, groupBy).map((x) => x.label)}
+              values={countsFrom(items, groupBy).map((x) => x.value)}
+            />
+          </ChartPanel>
+        </div>
+      ) : null}
       <AdminCard className="overflow-hidden">
         <table className="w-full text-sm">
           <thead className="bg-gray-50 border-b">
@@ -148,9 +162,29 @@ export function AdminCertificationsPage() {
   return (
     <CrudAdminPage
       title="Certifications"
-      description="Manage quality certifications"
+      description="Quality credentials — polar, doughnut, radar, and bar from live records"
       queryKey="admin-certifications"
       apiClient={certificationsApi}
+      insights={(items) => {
+        const cat = countsFrom(items, 'category');
+        const issuer = countsFrom(items, 'issued_by');
+        return (
+          <div className="grid md:grid-cols-2 gap-4 mb-6">
+            <ChartPanel title="Category polar" subtitle="Spread of certification types">
+              <LivePolar labels={cat.map((x) => x.label)} values={cat.map((x) => x.value)} />
+            </ChartPanel>
+            <ChartPanel title="Issuing body" subtitle="Doughnut of issuers">
+              <LiveDoughnut labels={issuer.map((x) => x.label)} values={issuer.map((x) => x.value)} />
+            </ChartPanel>
+            <ChartPanel title="Category radar" subtitle="Relative volume by type">
+              <LiveRadar label="Count" labels={cat.map((x) => x.label)} values={cat.map((x) => x.value)} />
+            </ChartPanel>
+            <ChartPanel title="Issuer volume" subtitle="Vertical bars">
+              <LiveBar label="Certs" labels={issuer.map((x) => x.label)} values={issuer.map((x) => x.value)} />
+            </ChartPanel>
+          </div>
+        );
+      }}
       columns={[{ key: 'title', label: 'Title' }, { key: 'category', label: 'Category' }, { key: 'issued_by', label: 'Issued By' }]}
       fields={[
         { key: 'title', label: 'Title', required: true },
@@ -167,9 +201,25 @@ export function AdminFacilitiesPage() {
   return (
     <CrudAdminPage
       title="Facilities"
-      description="Manage manufacturing plants"
+      description="Plant footprint — polar, radar, and bars by live location"
       queryKey="admin-facilities"
       apiClient={facilitiesApi}
+      insights={(items) => {
+        const loc = countsFrom(items, 'location');
+        return (
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-4 mb-6">
+            <ChartPanel title="Location polar">
+              <LivePolar labels={loc.map((x) => x.label)} values={loc.map((x) => x.value)} />
+            </ChartPanel>
+            <ChartPanel title="Location radar">
+              <LiveRadar label="Plants" labels={loc.map((x) => x.label)} values={loc.map((x) => x.value)} />
+            </ChartPanel>
+            <ChartPanel title="Location volume">
+              <LiveBar horizontal label="Facilities" labels={loc.map((x) => x.label)} values={loc.map((x) => x.value)} />
+            </ChartPanel>
+          </div>
+        );
+      }}
       columns={[{ key: 'name', label: 'Name' }, { key: 'location', label: 'Location' }]}
       fields={[
         { key: 'name', label: 'Name', required: true },
@@ -186,9 +236,30 @@ export function AdminCareersPage() {
   return (
     <CrudAdminPage
       title="Careers"
-      description="Manage job openings"
+      description="Openings mix — pie, polar, radar, and bars from live jobs"
       queryKey="admin-careers"
       apiClient={careersApi}
+      insights={(items) => {
+        const dept = countsFrom(items, 'department');
+        const loc = countsFrom(items, 'location');
+        const exp = countsFrom(items, 'experience');
+        return (
+          <div className="grid md:grid-cols-2 gap-4 mb-6">
+            <ChartPanel title="Department pie">
+              <LivePie labels={dept.map((x) => x.label)} values={dept.map((x) => x.value)} />
+            </ChartPanel>
+            <ChartPanel title="Location polar">
+              <LivePolar labels={loc.map((x) => x.label)} values={loc.map((x) => x.value)} />
+            </ChartPanel>
+            <ChartPanel title="Department radar">
+              <LiveRadar label="Roles" labels={dept.map((x) => x.label)} values={dept.map((x) => x.value)} />
+            </ChartPanel>
+            <ChartPanel title="Experience bands">
+              <LiveBar label="Jobs" labels={exp.map((x) => x.label)} values={exp.map((x) => x.value)} />
+            </ChartPanel>
+          </div>
+        );
+      }}
       columns={[{ key: 'title', label: 'Title' }, { key: 'department', label: 'Department' }, { key: 'location', label: 'Location' }]}
       fields={[
         { key: 'title', label: 'Title', required: true },

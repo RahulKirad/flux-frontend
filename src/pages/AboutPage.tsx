@@ -1,4 +1,5 @@
-import { AnimatedSection, PageHero, SectionHeading, SEOHead } from '../components/common';
+import { AnimatedSection, CmsPageHero, SectionHeading, SEOHead } from '../components/common';
+import { useCmsPage } from '../hooks/useSiteContent';
 import { BulletList, ContentPanel, ImageTextBlock, PageSection } from '../components/layout/ContentBlocks';
 import { about, company, facilitiesContent, qualityAssurance, supplyChain } from '../data/companyContent';
 
@@ -12,6 +13,8 @@ const timeline = [
 ];
 
 export default function AboutPage() {
+  const cms = useCmsPage('about');
+  const aboutImage = cms.bannerImage || 'https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=900&q=80';
   return (
     <>
       <SEOHead
@@ -19,11 +22,7 @@ export default function AboutPage() {
         description={about.overview[0].slice(0, 160)}
       />
 
-      <PageHero
-        label="About Us"
-        title="Integrated Engineering Solutions"
-        subtitle="Research, specification, prototyping, and fully assembled parts for bus body and railway manufacturing."
-      />
+      <CmsPageHero pageId="about" />
 
       <PageSection>
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-start">
@@ -35,7 +34,7 @@ export default function AboutPage() {
           </AnimatedSection>
           <AnimatedSection delay={0.15}>
             <div className="h-[400px] border border-kinetic-outline-variant overflow-hidden">
-              <img src="https://images.unsplash.com/photo-1504328345606-18bbc8c9d7d1?w=900&q=80" alt="Flux Corp team" className="w-full h-full object-cover" />
+              <img src={aboutImage} alt="Flux Corp team" className="w-full h-full object-cover" />
             </div>
           </AnimatedSection>
         </div>

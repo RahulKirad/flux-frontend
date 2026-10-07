@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { Outlet, NavLink, Navigate, useNavigate } from 'react-router-dom';
+import { Outlet, NavLink, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard, Briefcase, FolderOpen, Award, Building2,
-  Users, MessageSquare, Image, Settings, LogOut, Menu, BookOpen, PenTool, Layout,
+  Users, MessageSquare, Image, Settings, LogOut, Menu, BookOpen, PenTool, FileText, ChevronDown,
 } from 'lucide-react';
 import { useAuth } from '../store/AuthContext';
 import FluxLogo from '../components/common/FluxLogo';
+import { WEBSITE_PAGES } from '../data/adminPages';
 
 const sidebarLinks = [
   { label: 'Dashboard', path: '/admin', icon: LayoutDashboard, end: true },
@@ -17,7 +18,6 @@ const sidebarLinks = [
   { label: 'Facilities', path: '/admin/facilities', icon: Building2 },
   { label: 'Careers', path: '/admin/careers', icon: Users },
   { label: 'Leads', path: '/admin/leads', icon: MessageSquare },
-  { label: 'Site Content', path: '/admin/site-content', icon: Layout },
   { label: 'Media', path: '/admin/media', icon: Image },
   { label: 'Settings', path: '/admin/settings', icon: Settings },
 ];
@@ -25,7 +25,10 @@ const sidebarLinks = [
 function AdminShell() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const pagesActive = location.pathname.startsWith('/admin/pages');
+  const [pagesOpen, setPagesOpen] = useState(true);
 
   const handleLogout = () => {
     logout();
@@ -33,22 +36,96 @@ function AdminShell() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      <aside className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-primary-900 text-white transform transition-transform lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="p-6 border-b border-primary-800">
+    <div className="min-h-screen bg-[#F3EEE4] flex">
+      <aside className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-[#101820] text-white transform transition-transform lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="p-6 border-b border-white/10">
           <FluxLogo className="h-10 w-auto rounded bg-white px-2 py-1 mb-3" />
-          <p className="text-xs text-primary-300">CMS · {user?.role_name || user?.role_slug}</p>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-amber-400/90">Operations console</p>
+          <p className="text-xs text-slate-400 mt-1">{user?.role_name || user?.role_slug}</p>
         </div>
-        <nav className="p-4 space-y-1 pb-24">
-          {sidebarLinks.map((link) => (
+        <nav className="p-3 space-y-0.5 pb-24 overflow-y-auto max-h-[calc(100vh-11rem)]">
+          {sidebarLinks.slice(0, 1).map((link) => (
             <NavLink
               key={link.path}
               to={link.path}
               end={link.end}
               onClick={() => setSidebarOpen(false)}
               className={({ isActive }) =>
-                `flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm transition ${
-                  isActive ? 'bg-primary-700 text-white' : 'text-primary-200 hover:bg-primary-800'
+                `flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition ${
+                  isActive ? 'bg-amber-500 text-slate-950 font-medium' : 'text-slate-300 hover:bg-white/5'
+                }`
+              }
+            >
+              <link.icon size={18} />
+              {link.label}
+            </NavLink>
+          ))}
+
+          <div>
+            <button
+              type="button"
+              onClick={() => setPagesOpen((o) => !o)}
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition ${
+                pagesActive ? 'bg-amber-500/20 text-amber-300 font-medium' : 'text-slate-300 hover:bg-white/5'
+              }`}
+            >
+              <FileText size={18} />
+              <span className="flex-1 text-left">Pages</span>
+              <ChevronDown size={16} className={`transition ${pagesOpen ? 'rotate-180' : ''}`} />
+            </button>
+            {pagesOpen && (
+              <div className="ml-3 mt-0.5 space-y-0.5 border-l border-white/10 pl-2">
+                <NavLink
+                  to="/admin/pages"
+                  end
+                  onClick={() => setSidebarOpen(false)}
+                  className={({ isActive }) =>
+                    `block px-3 py-1.5 rounded-lg text-xs ${isActive ? 'bg-amber-500 text-slate-950 font-medium' : 'text-slate-400 hover:text-white'}`
+                  }
+                >
+                  All pages
+                </NavLink>
+                {WEBSITE_PAGES.map((page) => {
+                  const pagePath = `/admin/pages/${page.id}`;
+                  const isPageActive = location.pathname === pagePath;
+                  return (
+                    <div key={page.id}>
+                      <NavLink
+                        to={pagePath}
+                        onClick={() => setSidebarOpen(false)}
+                        className={({ isActive }) =>
+                          `block px-3 py-1.5 rounded-lg text-xs ${isActive ? 'bg-amber-500 text-slate-950 font-medium' : 'text-slate-400 hover:text-white'}`
+                        }
+                      >
+                        {page.nav}
+                      </NavLink>
+                      {isPageActive &&
+                        page.related.map((rel) => (
+                          <NavLink
+                            key={rel.to}
+                            to={rel.to}
+                            onClick={() => setSidebarOpen(false)}
+                            className="block pl-5 pr-3 py-1 text-[11px] text-slate-500 hover:text-amber-300"
+                          >
+                            {rel.label}
+                          </NavLink>
+                        ))}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {sidebarLinks.slice(1).map((link) => (
+            <NavLink
+              key={link.path}
+              to={link.path}
+              end={link.end}
+              onClick={() => setSidebarOpen(false)}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm transition ${
+                  isActive ? 'bg-amber-500 text-slate-950 font-medium' : 'text-slate-300 hover:bg-white/5'
                 }`
               }
             >
@@ -57,10 +134,10 @@ function AdminShell() {
             </NavLink>
           ))}
         </nav>
-        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-primary-800 bg-primary-900">
+        <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-white/10 bg-[#101820]">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm text-primary-200 hover:bg-primary-800 w-full transition"
+            className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm text-slate-300 hover:bg-white/5 w-full transition"
           >
             <LogOut size={18} /> Logout
           </button>
@@ -72,16 +149,16 @@ function AdminShell() {
       )}
 
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="bg-white shadow-sm px-6 py-4 flex items-center justify-between sticky top-0 z-30">
+        <header className="bg-[#101820]/95 backdrop-blur text-white px-6 py-3.5 flex items-center justify-between sticky top-0 z-30 border-b border-white/10">
           <button className="lg:hidden p-2" onClick={() => setSidebarOpen(true)} aria-label="Open menu">
             <Menu size={24} />
           </button>
-          <a href="/" target="_blank" rel="noopener noreferrer" className="text-sm text-primary-500 hover:underline hidden sm:block">
-            View Website →
+          <a href="/" target="_blank" rel="noopener noreferrer" className="text-sm text-amber-300 hover:text-amber-200 hidden sm:block">
+            View public site →
           </a>
           <div className="flex items-center gap-4 ml-auto">
-            <span className="text-sm text-gray-600">{user?.name}</span>
-            <div className="w-8 h-8 bg-primary-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+            <span className="text-sm text-slate-300">{user?.name}</span>
+            <div className="w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center text-slate-950 text-sm font-bold">
               {user?.name?.charAt(0)}
             </div>
           </div>
@@ -123,12 +200,13 @@ export function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-primary-900 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-2xl p-8 w-full max-w-md">
+    <div className="min-h-screen bg-[#101820] flex items-center justify-center p-4">
+      <div className="bg-[#F3EEE4] rounded-2xl shadow-2xl p-8 w-full max-w-md border border-amber-500/30">
         <div className="text-center mb-8">
           <FluxLogo className="h-14 w-auto mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-gray-900">Admin</h1>
-          <p className="text-gray-500 mt-1">Sign in to manage your website</p>
+          <p className="text-[10px] uppercase tracking-[0.22em] text-amber-800 font-semibold">Operations console</p>
+          <h1 className="text-2xl font-semibold text-slate-900 mt-1">Admin sign-in</h1>
+          <p className="text-slate-500 mt-1 text-sm">Live CMS for fluxcorporation.in</p>
         </div>
 
         {error && (

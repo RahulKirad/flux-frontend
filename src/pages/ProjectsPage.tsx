@@ -2,7 +2,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { Search } from 'lucide-react';
-import { AnimatedSection, PageHero, SectionHeading, SEOHead, LoadingSpinner } from '../components/common';
+import { AnimatedSection, PageHero, CmsPageHero, SectionHeading, SEOHead, LoadingSpinner } from '../components/common';
 import ProjectGridCard from '../components/common/ProjectGridCard';
 import { BulletList, ContentPanel, ImageTextBlock, PageSection } from '../components/layout/ContentBlocks';
 import { assignProjectCardSlides } from '../data/projectCardImages';
@@ -119,7 +119,7 @@ export default function ProjectsPage() {
   return (
     <>
       <SEOHead title="Projects | Flux Corp Portfolio" description="Engineering projects across bus body, railway, automotive, and industrial sectors." />
-      <PageHero label="Portfolio" title="Our Projects" subtitle="Proven engineering across bus body lightweighting, railway interiors, and industrial applications." />
+      <CmsPageHero pageId="projects" />
 
       <PageSection>
         <div className="flex flex-col md:flex-row gap-4 mb-10">
@@ -247,7 +247,7 @@ export function IndustriesPage() {
   return (
     <>
       <SEOHead title="Industries | Flux Corp" description="Automotive, railways, commercial vehicles, EV, and industrial engineering solutions." />
-      <PageHero label="Industries Served" title="Sectors We Serve" subtitle="Integrated solutions tailored to transportation and industrial regulatory environments." />
+      <CmsPageHero pageId="industries" />
 
       <PageSection>
         <div className="grid md:grid-cols-2 gap-8">

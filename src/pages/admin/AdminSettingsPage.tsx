@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Save } from 'lucide-react';
 import { settingsApi } from '../../services/api';
 import { PageHeader, AdminCard, FormField, inputClass, LoadingState } from '../../components/admin/shared';
+import { ChartPanel, KpiGrid, LiveDoughnut } from '../../components/admin/charts';
 
 export default function AdminSettingsPage() {
   const qc = useQueryClient();
@@ -55,13 +56,32 @@ export default function AdminSettingsPage() {
     <div>
       <PageHeader
         title="Settings"
-        description="Company information and site configuration"
+        description="Live company profile stored in the database"
         action={
           <button onClick={() => save.mutate(form)} disabled={save.isPending} className="btn-primary text-sm flex items-center gap-2">
             <Save size={16} /> {save.isPending ? 'Saving...' : 'Save Changes'}
           </button>
         }
       />
+
+      <KpiGrid
+        items={[
+          { label: 'Fields', value: fields.length },
+          { label: 'Filled', value: fields.filter((f) => (form[f.key] || '').trim()).length },
+          { label: 'Empty', value: fields.filter((f) => !(form[f.key] || '').trim()).length },
+        ]}
+      />
+      <div className="max-w-md mb-6">
+        <ChartPanel title="Profile completeness">
+          <LiveDoughnut
+            labels={['Filled', 'Empty']}
+            values={[
+              fields.filter((f) => (form[f.key] || '').trim()).length,
+              fields.filter((f) => !(form[f.key] || '').trim()).length,
+            ]}
+          />
+        </ChartPanel>
+      </div>
 
       <AdminCard className="p-6">
         <div className="grid md:grid-cols-2 gap-4">

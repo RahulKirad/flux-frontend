@@ -4,6 +4,7 @@ import { ArrowRight, Download } from 'lucide-react';
 import {
   AnimatedSection,
   PageHero,
+  CmsPageHero,
   SectionHeading,
   SEOHead,
   LoadingSpinner,
@@ -295,11 +296,7 @@ export default function ServicesPage() {
         title="Services | Flux Corp"
         description="Engineering design, composites & forming, prototyping, tools & die, automotive styling, bus body manufacturing, and railway components."
       />
-      <PageHero
-        label="Products & Services"
-        title="Integrated Manufacturing Services"
-        subtitle="End-to-end support from initial design through final production and assembly."
-      />
+      <CmsPageHero pageId="services" />
 
       <PageSection>
         <div className="grid md:grid-cols-2 gap-8">

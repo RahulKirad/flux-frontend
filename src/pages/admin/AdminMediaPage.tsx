@@ -4,6 +4,7 @@ import { Upload, Trash2, Image as ImageIcon } from 'lucide-react';
 import { mediaApi } from '../../services/api';
 import { resolveMediaUrl } from '../../utils/mediaUrl';
 import { PageHeader, AdminCard, LoadingState, EmptyState } from '../../components/admin/shared';
+import { ChartPanel, KpiGrid, LiveDoughnut, countsFrom } from '../../components/admin/charts';
 
 interface MediaItem {
   id: number;
@@ -52,7 +53,7 @@ export default function AdminMediaPage() {
     <div>
       <PageHeader
         title="Media Library"
-        description="Upload and manage images, videos, and documents"
+        description="Live files from the API — types charted from records"
         action={
           <label className="btn-primary text-sm flex items-center gap-2 cursor-pointer">
             <Upload size={16} />
@@ -61,6 +62,23 @@ export default function AdminMediaPage() {
           </label>
         }
       />
+
+      <KpiGrid
+        items={[
+          { label: 'Files', value: media.length },
+          { label: 'Images', value: media.filter((m) => m.file_type === 'image').length },
+          { label: 'Video', value: media.filter((m) => m.file_type === 'video').length },
+          { label: 'Other', value: media.filter((m) => m.file_type !== 'image' && m.file_type !== 'video').length },
+        ]}
+      />
+      <div className="mb-6 max-w-xl">
+        <ChartPanel title="Library composition">
+          <LiveDoughnut
+            labels={countsFrom(media as unknown as Record<string, unknown>[], 'file_type').map((x) => x.label)}
+            values={countsFrom(media as unknown as Record<string, unknown>[], 'file_type').map((x) => x.value)}
+          />
+        </ChartPanel>
+      </div>
 
       {media.length === 0 ? (
         <AdminCard><EmptyState message="No media files yet. Upload your first file." /></AdminCard>

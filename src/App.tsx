@@ -18,6 +18,7 @@ import AdminBlogsPage from './pages/admin/AdminBlogsPage';
 import AdminMediaPage from './pages/admin/AdminMediaPage';
 import AdminSettingsPage from './pages/admin/AdminSettingsPage';
 import AdminSiteContentPage from './pages/admin/AdminSiteContentPage';
+import AdminWebsitePagesHub, { AdminWebsitePageEditor } from './pages/admin/AdminWebsitePages';
 import {
   AdminCaseStudiesPage, AdminCertificationsPage,
   AdminFacilitiesPage, AdminCareersPage,
@@ -72,6 +73,8 @@ export default function App() {
               <Route path="facilities" element={<AdminFacilitiesPage />} />
               <Route path="careers" element={<AdminCareersPage />} />
               <Route path="leads" element={<AdminLeadsPage />} />
+              <Route path="pages" element={<AdminWebsitePagesHub />} />
+              <Route path="pages/:pageId" element={<AdminWebsitePageEditor />} />
               <Route path="site-content" element={<AdminSiteContentPage />} />
               <Route path="media" element={<AdminMediaPage />} />
               <Route path="settings" element={<AdminSettingsPage />} />

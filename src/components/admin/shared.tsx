@@ -12,8 +12,9 @@ export function PageHeader({
   return (
     <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
-        {description && <p className="text-gray-500 text-sm mt-1">{description}</p>}
+        <p className="text-[11px] uppercase tracking-[0.22em] text-amber-700/80 font-semibold mb-1">Flux Corp CMS</p>
+        <h1 className="text-2xl font-semibold text-slate-900 tracking-tight">{title}</h1>
+        {description && <p className="text-slate-500 text-sm mt-1">{description}</p>}
       </div>
       {action}
     </div>
@@ -22,7 +23,7 @@ export function PageHeader({
 
 export function AdminCard({ children, className = '' }: { children: React.ReactNode; className?: string }) {
   return (
-    <div className={`bg-white rounded-xl shadow-sm border border-gray-100 ${className}`}>
+    <div className={`bg-white rounded-2xl shadow-[0_12px_40px_-24px_rgba(15,23,42,0.45)] border border-slate-200/80 ${className}`}>
       {children}
     </div>
   );

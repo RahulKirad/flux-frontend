@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Plus, Pencil, Trash2 } from 'lucide-react';
 import { servicesApi } from '../../services/api';
 import { PageHeader, AdminCard, Modal, FormField, inputClass, LoadingState, EmptyState, slugify } from '../../components/admin/shared';
+import { ChartPanel, KpiGrid, LiveDoughnut, LiveBar, LiveRadar, LivePolar } from '../../components/admin/charts';
 
 interface Service {
   id: number;
@@ -74,13 +75,59 @@ export default function AdminServicesPage() {
     <div>
       <PageHeader
         title="Services"
-        description="Manage main services and sub-services"
+        description="Live catalogue — charts reflect current API records"
         action={
           <button onClick={openCreate} className="btn-primary text-sm flex items-center gap-2">
             <Plus size={16} /> Add Service
           </button>
         }
       />
+
+      <KpiGrid
+        items={[
+          { label: 'Total', value: services.length },
+          { label: 'Main', value: services.filter((s) => !s.parent_id).length },
+          { label: 'Sub-services', value: services.filter((s) => !!s.parent_id).length },
+          { label: 'Featured', value: services.filter((s) => s.is_featured).length },
+        ]}
+      />
+      <div className="grid md:grid-cols-2 gap-4 mb-6">
+        <ChartPanel title="Catalogue doughnut" subtitle="Active vs inactive">
+          <LiveDoughnut
+            labels={['Active', 'Inactive']}
+            values={[services.filter((s) => s.is_active).length, services.filter((s) => !s.is_active).length]}
+          />
+        </ChartPanel>
+        <ChartPanel title="Structure bars" subtitle="Main, sub, featured">
+          <LiveBar
+            label="Services"
+            labels={['Main', 'Sub-service', 'Featured']}
+            values={[
+              services.filter((s) => !s.parent_id).length,
+              services.filter((s) => !!s.parent_id).length,
+              services.filter((s) => s.is_featured).length,
+            ]}
+          />
+        </ChartPanel>
+        <ChartPanel title="Inventory radar">
+          <LiveRadar
+            label="Count"
+            labels={['Main', 'Sub', 'Featured', 'Inactive']}
+            values={[
+              services.filter((s) => !s.parent_id).length,
+              services.filter((s) => !!s.parent_id).length,
+              services.filter((s) => s.is_featured).length,
+              services.filter((s) => !s.is_active).length,
+            ]}
+          />
+        </ChartPanel>
+        <ChartPanel title="Featured polar">
+          <LivePolar
+            labels={['Featured', 'Standard']}
+            values={[services.filter((s) => s.is_featured).length, services.filter((s) => !s.is_featured).length]}
+          />
+        </ChartPanel>
+      </div>
 
       <AdminCard className="overflow-hidden">
         <table className="w-full text-sm">
