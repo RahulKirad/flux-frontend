@@ -93,7 +93,13 @@ export function AdminWebsitePageEditor() {
       bannerImage: p?.bannerImage || site.assets?.[`page.${id}.banner`] || '',
     });
     if (site.hero) setHero({ ...emptyHero(), ...site.hero });
-    if (site.home) setHome({ aboutLabel: '', aboutTitle: '', aboutBody: '', ...site.home });
+    if (site.home) {
+      setHome({
+        aboutLabel: site.home.aboutLabel ?? '',
+        aboutTitle: site.home.aboutTitle ?? '',
+        aboutBody: site.home.aboutBody ?? '',
+      });
+    }
     if (site.assets) setAssets({ ...site.assets });
   }, [id, site]);
 
