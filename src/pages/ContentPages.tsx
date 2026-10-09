@@ -1,11 +1,12 @@
 import { Link, useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
-import { Search, Download, Phone, Mail, MapPin } from 'lucide-react';
+import { Search, Download } from 'lucide-react';
 import { AnimatedSection, PageHero, CmsPageHero, SectionHeading, SEOHead, LoadingSpinner } from '../components/common';
 import CaseStudyDetailView from '../components/case-studies/CaseStudyDetailView';
 import ProjectGridCard from '../components/common/ProjectGridCard';
 import ContactForm from '../components/forms/ContactForm';
+import CompanyContactDetails from '../components/layout/CompanyContactDetails';
 import { BulletList, ContentPanel, ImageTextBlock, PageSection } from '../components/layout/ContentBlocks';
 import {
   blogArticles,
@@ -259,9 +260,9 @@ export function FacilitiesPage() {
   if (slug) {
     if (detailLoading) return <LoadingSpinner />;
     const facility: Facility | undefined = detailRes?.data?.data;
-    const name = facility?.name || staticFacility?.name;
-    const location = facility?.location || staticFacility?.location;
-    const description = facility?.description || staticFacility?.description;
+    const name = staticFacility?.name || facility?.name;
+    const location = staticFacility?.location || facility?.location;
+    const description = staticFacility?.description || facility?.description;
     const equipment = staticFacility?.equipment || [];
 
     if (!name) return <div className="stitch-section text-center py-20">Facility not found</div>;
@@ -302,13 +303,27 @@ export function FacilitiesPage() {
 
   if (isLoading) return <LoadingSpinner />;
   const facilities: Facility[] = allRes?.data?.data || [];
-  const displayFacilities = facilities.length > 0
-    ? facilities
-    : facilitiesContent.map((f, id) => ({ id, slug: f.slug, name: f.name, location: f.location, description: f.description, banner: f.image } as Facility));
+  const displayFacilities = facilitiesContent.map((f, id) => {
+    const api = facilities.find(
+      (row) =>
+        row.slug === f.slug ||
+        (f.slug === 'chikhali' && row.slug?.includes('chikhali')) ||
+        (f.slug === 'chakan' && row.slug?.includes('chakan')) ||
+        (f.slug === 'bhosari' && row.slug?.includes('bhosari')),
+    );
+    return {
+      id: api?.id ?? id + 1,
+      slug: f.slug,
+      name: f.name,
+      location: f.location,
+      description: f.description,
+      banner: api?.banner || f.image,
+    } as Facility;
+  });
 
   return (
     <>
-      <SEOHead title="Facilities | Flux Corp" description="Chikhali manufacturing and Chakan design & prototyping facilities in Pune." />
+      <SEOHead title="Facilities | Flux Corporation" description={company.addressSummary} />
       <CmsPageHero pageId="facilities" />
       <PageSection>
         <div className="grid md:grid-cols-2 gap-8 mb-16">
@@ -428,7 +443,7 @@ export function CareersPage() {
 export function ContactPage() {
   return (
     <>
-      <SEOHead title="Contact | Flux Corp" description={`Contact Flux Corp — ${company.phone}, ${company.email}, Chikhali & Chakan, Pune.`} />
+      <SEOHead title="Contact | Flux Corporation" description={`Contact Flux Corporation — ${company.phone}, ${company.emails.join(', ')}. ${company.addressSummary}`} />
       <CmsPageHero pageId="contact" />
 
       <PageSection>
@@ -438,25 +453,7 @@ export function ContactPage() {
               Flux Corp welcomes inquiries from domestic and international clients seeking integrated
               engineering solutions for bus body manufacturing, railway parts, and industrial applications.
             </p>
-            <div className="space-y-6">
-              {company.locations.map((loc) => (
-                <div key={loc.name} className="flex items-start gap-4">
-                  <MapPin className="w-5 h-5 text-kinetic-primary shrink-0 mt-0.5" />
-                  <div>
-                    <h4 className="font-semibold uppercase text-sm text-kinetic-primary">{loc.name}</h4>
-                    <p className="text-kinetic-on-surface-variant text-sm mt-1">{loc.address}</p>
-                  </div>
-                </div>
-              ))}
-              <div className="flex items-center gap-4">
-                <Phone className="w-5 h-5 text-kinetic-primary" />
-                <a href={`tel:${company.phone.replace(/\s/g, '')}`} className="text-kinetic-on-surface-variant hover:text-kinetic-primary">{company.phone}</a>
-              </div>
-              <div className="flex items-center gap-4">
-                <Mail className="w-5 h-5 text-kinetic-primary" />
-                <a href={`mailto:${company.email}`} className="text-kinetic-on-surface-variant hover:text-kinetic-primary">{company.email}</a>
-              </div>
-            </div>
+            <CompanyContactDetails />
 
             <div className="mt-10 grid sm:grid-cols-3 gap-4">
               {commercialTerms.pricing.map((item) => (

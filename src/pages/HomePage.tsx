@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import {
-  Cog, Layers, Printer, Wrench, Car, Bus, Train, Factory, ChevronRight, MapPin, Mail, Phone, Shield, Truck,
+  Cog, Layers, Printer, Wrench, Car, Bus, Train, Factory, ChevronRight, Shield, Truck,
 } from 'lucide-react';
 import { AnimatedSection, SEOHead, SectionHeading } from '../components/common';
 import HeroBannerSlider from '../components/home/HeroBannerSlider';
@@ -18,6 +18,7 @@ import {
   servicesContent,
 } from '../data/companyContent';
 import { servicesApi, settingsApi } from '../services/api';
+import CompanyContactDetails from '../components/layout/CompanyContactDetails';
 import { useSiteContent } from '../hooks/useSiteContent';
 import { resolveMediaUrl } from '../utils/mediaUrl';
 import type { Service } from '../types';
@@ -122,8 +123,8 @@ export default function HomePage() {
   return (
     <>
       <SEOHead
-        title="Flux Corp | Integrated Engineering for Bus Body & Railway Manufacturing"
-        description="Integrated engineering design, composites, prototyping, tools & die, bus body and railway parts manufacturing in Chikhali & Chakan, Pune."
+        title="Flux Corporation | Integrated Engineering for Bus Body & Railway Manufacturing"
+        description={`Integrated engineering design, composites, prototyping, tools & die, bus body and railway parts manufacturing. ${company.addressSummary}`}
         keywords="bus body manufacturing, railway parts, composites, prototyping, tools & die, engineering design"
       />
 
@@ -141,7 +142,7 @@ export default function HomePage() {
         <PageSection>
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
             <AnimatedSection>
-              <span className="stitch-label block mb-4">{siteContent?.home?.aboutLabel || 'About Flux Corp'}</span>
+              <span className="stitch-label block mb-4">{siteContent?.home?.aboutLabel || 'About Flux Corporation'}</span>
               <h2 className="text-2xl sm:text-3xl lg:text-4xl xl:text-5xl font-bold text-kinetic-primary leading-tight uppercase mb-6 text-balance">
                 {siteContent?.home?.aboutTitle || 'Integrated Engineering Solutions.'}
               </h2>
@@ -313,29 +314,7 @@ export default function HomePage() {
                 Flux Corp welcomes inquiries from domestic and international clients seeking integrated
                 engineering solutions for bus body manufacturing, railway parts, and industrial applications.
               </p>
-              <div className="space-y-6">
-                {company.locations.map((loc) => (
-                  <div key={loc.name} className="flex items-start gap-4">
-                    <MapPin className="w-5 h-5 text-kinetic-primary shrink-0 mt-0.5" strokeWidth={1.5} />
-                    <div>
-                      <h5 className="text-xs font-semibold uppercase tracking-widest text-kinetic-primary mb-1">{loc.name}</h5>
-                      <p className="text-kinetic-on-surface-variant text-sm">{loc.address}</p>
-                    </div>
-                  </div>
-                ))}
-                <div className="flex items-center gap-4">
-                  <Phone className="w-5 h-5 text-kinetic-primary shrink-0" strokeWidth={1.5} />
-                  <a href={`tel:${company.phone.replace(/\s/g, '')}`} className="text-kinetic-on-surface-variant hover:text-kinetic-primary transition">
-                    {company.phone}
-                  </a>
-                </div>
-                <div className="flex items-center gap-4">
-                  <Mail className="w-5 h-5 text-kinetic-primary shrink-0" strokeWidth={1.5} />
-                  <a href={`mailto:${company.email}`} className="text-kinetic-on-surface-variant hover:text-kinetic-primary transition">
-                    {company.email}
-                  </a>
-                </div>
-              </div>
+              <CompanyContactDetails />
             </AnimatedSection>
             <AnimatedSection delay={0.15}>
               <div className="bg-white p-8 lg:p-10 border border-kinetic-outline-variant">

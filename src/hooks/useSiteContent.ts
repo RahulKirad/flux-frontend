@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { siteContentApi } from '../services/api';
 import { PAGE_FALLBACKS, type WebsitePageId, type SitePageCopy } from '../data/adminPages';
+import type { ProductGalleryItem } from '../data/productGallery';
 import { resolveMediaUrl } from '../utils/mediaUrl';
 
 export interface SiteContentHero {
@@ -14,6 +15,7 @@ export interface SiteContentHero {
   ctaSecondary: string;
   ctaSecondaryHref: string;
   videoUrl: string;
+  videoUrl2?: string;
   posterUrl: string;
 }
 
@@ -22,6 +24,7 @@ export interface SiteContent {
   home: { aboutLabel: string; aboutTitle: string; aboutBody: string };
   contact: { headline: string; subheadline: string };
   pages?: Record<string, Partial<SitePageCopy>>;
+  productGallery?: ProductGalleryItem[];
   assets: Record<string, string>;
 }
 

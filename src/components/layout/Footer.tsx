@@ -1,7 +1,8 @@
 import { Link } from 'react-router-dom';
-import { MapPin, Phone, Mail, Share2 } from 'lucide-react';
+import { Share2 } from 'lucide-react';
 import FluxLogo from '../common/FluxLogo';
 import { company } from '../../data/companyContent';
+import CompanyContactDetails from './CompanyContactDetails';
 
 const footerLinks = {
   Services: [
@@ -20,6 +21,7 @@ const footerLinks = {
   ],
   Resources: [
     { label: 'Projects', path: '/projects' },
+    { label: 'Product Gallery', path: '/product-gallery' },
     { label: 'Case Studies', path: '/case-studies' },
     { label: 'Industries', path: '/industries' },
     { label: 'Contact', path: '/contact' },
@@ -33,29 +35,14 @@ export default function Footer() {
         <div className="stitch-container">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
             <div className="lg:col-span-2">
-              <Link to="/" className="inline-block mb-4">
-                <FluxLogo className="h-12 w-auto rounded-lg bg-white px-2 py-1" />
+              <Link to="/" className="inline-block mb-4" aria-label="Flux Corporation home">
+                <FluxLogo highlighted className="h-14 w-auto max-w-[240px]" />
               </Link>
               <p className="text-white/60 mb-6 max-w-sm text-sm leading-relaxed">
                 {company.tagline}. Integrated engineering for bus body manufacturing, railway parts,
-                and industrial applications from Chikhali & Chakan, Pune.
+                and industrial applications. {company.addressSummary}
               </p>
-              <div className="space-y-3 text-sm">
-                {company.locations.map((loc) => (
-                  <div key={loc.name} className="flex items-start gap-2">
-                    <MapPin size={16} className="mt-0.5 text-white/50 shrink-0" />
-                    <span>{loc.address}</span>
-                  </div>
-                ))}
-                <div className="flex items-center gap-2">
-                  <Phone size={16} className="text-white/50" />
-                  <a href={`tel:${company.phone.replace(/\s/g, '')}`} className="hover:text-white transition">{company.phone}</a>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Mail size={16} className="text-white/50" />
-                  <a href={`mailto:${company.email}`} className="hover:text-white transition">{company.email}</a>
-                </div>
-              </div>
+              <CompanyContactDetails tone="dark" />
             </div>
 
             {Object.entries(footerLinks).map(([title, links]) => (

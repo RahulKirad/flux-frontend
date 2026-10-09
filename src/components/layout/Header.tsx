@@ -23,6 +23,7 @@ const navLinks = [
   },
   { label: 'Industries', path: '/industries' },
   { label: 'Projects', path: '/projects' },
+  { label: 'Product Gallery', path: '/product-gallery' },
   { label: 'Contact', path: '/contact' },
 ];
 
@@ -97,8 +98,11 @@ export default function Header() {
     >
       <div className="stitch-container-home min-w-0">
         <div className="flex items-center justify-between h-16 lg:h-[4.5rem] gap-2 lg:gap-3 xl:gap-4 min-w-0">
-          <Link to="/" className="flex items-center shrink-0 min-w-0">
-            <FluxLogo className="h-9 sm:h-10 lg:h-10 xl:h-11 w-auto max-w-[140px] sm:max-w-none" />
+          <Link to="/" className="flex items-center shrink-0 min-w-0" aria-label="Flux Corporation home">
+            <FluxLogo
+              highlighted
+              className="h-10 sm:h-11 lg:h-12 w-auto max-w-[200px] sm:max-w-[240px] lg:max-w-[272px]"
+            />
           </Link>
 
           <nav className="hidden lg:flex items-center gap-2 lg:gap-3 xl:gap-5 2xl:gap-7 flex-1 justify-center min-w-0 overflow-visible">

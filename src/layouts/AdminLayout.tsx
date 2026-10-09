@@ -39,7 +39,7 @@ function AdminShell() {
     <div className="min-h-screen bg-[#F3EEE4] flex">
       <aside className={`fixed lg:static inset-y-0 left-0 z-50 w-64 bg-[#101820] text-white transform transition-transform lg:translate-x-0 ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="p-6 border-b border-white/10">
-          <FluxLogo className="h-10 w-auto rounded bg-white px-2 py-1 mb-3" />
+          <FluxLogo highlighted className="h-11 w-auto max-w-[200px] mb-3" />
           <p className="text-[10px] uppercase tracking-[0.2em] text-amber-400/90">Operations console</p>
           <p className="text-xs text-slate-400 mt-1">{user?.role_name || user?.role_slug}</p>
         </div>
@@ -203,7 +203,7 @@ export function AdminLoginPage() {
     <div className="min-h-screen bg-[#101820] flex items-center justify-center p-4">
       <div className="bg-[#F3EEE4] rounded-2xl shadow-2xl p-8 w-full max-w-md border border-amber-500/30">
         <div className="text-center mb-8">
-          <FluxLogo className="h-14 w-auto mx-auto mb-4" />
+          <FluxLogo highlighted className="h-16 w-auto max-w-[240px] mx-auto mb-4" />
           <p className="text-[10px] uppercase tracking-[0.22em] text-amber-800 font-semibold">Operations console</p>
           <h1 className="text-2xl font-semibold text-slate-900 mt-1">Admin sign-in</h1>
           <p className="text-slate-500 mt-1 text-sm">Live CMS for fluxcorporation.in</p>

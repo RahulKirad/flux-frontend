@@ -39,6 +39,7 @@ export default function AdminSettingsPage() {
     { key: 'company_name', label: 'Company Name', group: 'company' },
     { key: 'company_tagline', label: 'Tagline', group: 'company' },
     { key: 'company_email', label: 'Email', group: 'company' },
+    { key: 'company_email_alt', label: 'Alternate email', group: 'company' },
     { key: 'company_phone', label: 'Phone', group: 'company' },
     { key: 'company_address', label: 'Address', group: 'company' },
     { key: 'vision', label: 'Vision', group: 'company', textarea: true },

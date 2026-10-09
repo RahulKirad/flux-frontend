@@ -57,14 +57,16 @@ export function PageHero({
   subtitle,
   label,
   background,
+  aside,
 }: {
   title: string;
   subtitle?: string;
   label?: string;
   background?: string;
+  aside?: React.ReactNode;
 }) {
   return (
-    <section className="page-hero galaxy-host">
+    <section className={`page-hero galaxy-host ${aside ? 'lg:py-14' : ''}`}>
       {background ? (
         <>
           <img src={background} alt="" className="absolute inset-0 w-full h-full object-cover" />
@@ -77,33 +79,40 @@ export function PageHero({
         </>
       )}
       <div className="stitch-container-home relative z-10">
-        {label && (
-          <motion.span
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="stitch-label text-white/60 block mb-4 tracking-[0.35em]"
-          >
-            {label}
-          </motion.span>
-        )}
-        <motion.h1
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase leading-tight mb-4 max-w-4xl text-white/95"
-        >
-          {title}
-        </motion.h1>
-        {subtitle && (
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
-            className="text-base lg:text-lg text-white/70 max-w-2xl leading-relaxed"
-          >
-            {subtitle}
-          </motion.p>
-        )}
+        <div className={aside ? 'grid lg:grid-cols-[minmax(0,0.85fr)_minmax(420px,1.15fr)] items-center gap-6 lg:gap-8' : ''}>
+          <div className="relative z-20">
+            {label && (
+              <motion.span
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="stitch-label text-white/60 block mb-4 tracking-[0.35em]"
+              >
+                {label}
+              </motion.span>
+            )}
+            <motion.h1
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className={`text-3xl md:text-4xl lg:text-5xl font-bold uppercase leading-tight mb-4 text-white/95 ${
+                aside ? 'max-w-xl' : 'max-w-4xl'
+              }`}
+            >
+              {title}
+            </motion.h1>
+            {subtitle && (
+              <motion.p
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.15 }}
+                className={`text-base lg:text-lg text-white/70 leading-relaxed ${aside ? 'max-w-lg' : 'max-w-2xl'}`}
+              >
+                {subtitle}
+              </motion.p>
+            )}
+          </div>
+          {aside ? <div className="relative z-0 min-w-0 overflow-hidden">{aside}</div> : null}
+        </div>
       </div>
     </section>
   );
@@ -178,7 +187,7 @@ export function SEOHead({
   return null;
 }
 
-export function CmsPageHero({ pageId }: { pageId: WebsitePageId }) {
+export function CmsPageHero({ pageId, aside }: { pageId: WebsitePageId; aside?: React.ReactNode }) {
   const copy = useCmsPage(pageId);
   return (
     <>
@@ -187,6 +196,7 @@ export function CmsPageHero({ pageId }: { pageId: WebsitePageId }) {
         title={copy.title}
         subtitle={copy.subtitle}
         background={copy.bannerImage || undefined}
+        aside={aside}
       />
       {copy.body ? (
         <section className="stitch-section bg-white">

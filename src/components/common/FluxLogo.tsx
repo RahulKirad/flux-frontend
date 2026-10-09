@@ -1,17 +1,22 @@
-const FLUX_LOGO_SRC = '/flux-logo.jpeg';
+import fluxLogoWhite from '../../assets/Flux Corporation Logo on White.png';
 
 interface FluxLogoProps {
   className?: string;
+  highlighted?: boolean;
 }
 
-export default function FluxLogo({ className = 'h-12 w-auto' }: FluxLogoProps) {
+export default function FluxLogo({ className = 'h-12 w-auto', highlighted = false }: FluxLogoProps) {
   return (
     <img
-      src={FLUX_LOGO_SRC}
+      src={fluxLogoWhite}
       alt="Flux Corporation"
-      className={className}
-      width={180}
-      height={48}
+      className={`${className} object-contain ${
+        highlighted
+          ? 'rounded-lg bg-white px-2.5 py-1.5 shadow-[0_0_0_1px_rgba(15,23,42,0.08)]'
+          : ''
+      }`}
+      width={280}
+      height={72}
     />
   );
 }

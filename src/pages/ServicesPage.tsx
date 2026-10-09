@@ -10,6 +10,7 @@ import {
   LoadingSpinner,
 } from '../components/common';
 import { busImage, engineeringImage, prototypingImage, toolsDieImage, toolsAndDieImage } from '../assets/images';
+import busBodyVideo from '../assets/gemini_generated_video_843113fb.mp4';
 import ContactForm from '../components/forms/ContactForm';
 import { BulletList, ContentPanel, ImageTextBlock, PageSection } from '../components/layout/ContentBlocks';
 import { getStaticServiceBySlug, getStaticServices, servicesContent } from '../data/companyContent';
@@ -205,8 +206,21 @@ export default function ServicesPage() {
               </AnimatedSection>
               {content && (
                 <AnimatedSection delay={0.15}>
-                  <div className="h-[360px] lg:h-[440px] border border-kinetic-outline-variant overflow-hidden">
-                    <img src={content.image} alt={displayService.title} className="w-full h-full object-cover" />
+                  <div className="h-[360px] lg:h-[440px] border border-kinetic-outline-variant overflow-hidden bg-[#141414]">
+                    {isBusBody ? (
+                      <video
+                        src={busBodyVideo}
+                        poster={busImage}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        className="w-full h-full object-cover"
+                        aria-label={displayService.title}
+                      />
+                    ) : (
+                      <img src={content.image} alt={displayService.title} className="w-full h-full object-cover" />
+                    )}
                   </div>
                 </AnimatedSection>
               )}

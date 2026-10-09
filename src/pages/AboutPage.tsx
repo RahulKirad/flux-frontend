@@ -5,10 +5,10 @@ import { about, company, facilitiesContent, qualityAssurance, supplyChain } from
 
 const timeline = [
   { year: '2009', title: 'Company Founded', desc: 'Flux Corp established in Pune with integrated engineering design focus.' },
-  { year: '2012', title: 'Chikhali Manufacturing', desc: 'Opened Chikhali facility for bus body and composite manufacturing.' },
+  { year: '2012', title: 'Chikhali Registered Office', desc: 'Registered office established in Chikhali, Pune.' },
   { year: '2015', title: 'ISO 9001 Certification', desc: 'Achieved ISO 9001 quality management certification.' },
   { year: '2018', title: 'Railway Division', desc: 'RDSO approval for railway component manufacturing.' },
-  { year: '2021', title: 'Chakan Design Center', desc: 'Opened advanced prototyping, styling, and model shop facility.' },
+  { year: '2021', title: 'Plant 1 Chakan MIDC', desc: 'Opened manufacturing Plant 1 at Chakan MIDC, Pune, for prototyping, styling, and production support.' },
   { year: '2024', title: 'EV & Lightweighting', desc: 'Leading EV bus body, battery enclosure, and composite lightweighting programs.' },
 ];
 
@@ -18,7 +18,7 @@ export default function AboutPage() {
   return (
     <>
       <SEOHead
-        title="About Flux Corp | Integrated Engineering Excellence"
+        title="About Flux Corporation | Integrated Engineering Excellence"
         description={about.overview[0].slice(0, 160)}
       />
 
@@ -65,8 +65,8 @@ export default function AboutPage() {
       <PageSection tone="muted">
         <ImageTextBlock
           label="Facilities"
-          title="Chikhali & Chakan, Pune"
-          description={`Operating from advanced facilities in Chikhali and Chakan, ${company.name} leverages CNC machining, 3D printing, vacuum forming, model shops, and NDT/CMM inspection laboratories to deliver precision at scale.`}
+          title="Chikhali, Chakan & Bhosari, Pune"
+          description={`${company.addressSummary}. ${company.name} leverages CNC machining, 3D printing, vacuum forming, model shops, and NDT/CMM inspection laboratories to deliver precision at scale.`}
           image="https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=1000&q=80"
           reverse
           link={{ label: 'View Facilities', href: '/facilities' }}

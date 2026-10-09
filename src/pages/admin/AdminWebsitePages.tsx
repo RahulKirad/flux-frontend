@@ -28,6 +28,7 @@ function emptyHero(): SiteContentHero {
     ctaSecondary: '',
     ctaSecondaryHref: '/services',
     videoUrl: '',
+    videoUrl2: '',
     posterUrl: '',
   };
 }
@@ -291,6 +292,38 @@ export function AdminWebsitePageEditor() {
                     }}
                   />
                 </label>
+                <FormField label="Second banner video URL (plays after the first video ends)">
+                  <input
+                    className={inputClass}
+                    value={hero.videoUrl2 || ''}
+                    onChange={(e) =>
+                      setHero({
+                        ...hero,
+                        videoUrl2: e.target.value,
+                      })
+                    }
+                    placeholder="/uploads/videos/… or leave blank for the placeholder bus clip"
+                  />
+                </FormField>
+                <label className="btn-primary text-sm inline-flex items-center gap-2 cursor-pointer w-fit">
+                  <Upload size={16} />
+                  Upload second banner video
+                  <input
+                    type="file"
+                    className="hidden"
+                    accept="video/mp4,video/webm"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0];
+                      if (file) {
+                        void uploadImage(file, (path) => {
+                          setHero((h) => ({ ...h, videoUrl2: path }));
+                          setAssets((a) => ({ ...a, 'hero.video2': path }));
+                        });
+                      }
+                      e.target.value = '';
+                    }}
+                  />
+                </label>
               </AdminCard>
               <AdminCard className="p-6 space-y-4">
                 <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-500">Home about section</h3>
@@ -379,6 +412,14 @@ export function AdminWebsitePageEditor() {
             {id === 'home' && (hero.videoUrl || assets['hero.video']) ? (
               <video
                 src={resolveMediaUrl(hero.videoUrl || assets['hero.video'])}
+                controls
+                muted
+                className="mt-3 w-full rounded-lg border"
+              />
+            ) : null}
+            {id === 'home' && (hero.videoUrl2 || assets['hero.video2']) ? (
+              <video
+                src={resolveMediaUrl(hero.videoUrl2 || assets['hero.video2'])}
                 controls
                 muted
                 className="mt-3 w-full rounded-lg border"

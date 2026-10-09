@@ -9,7 +9,8 @@ export type WebsitePageId =
   | 'facilities'
   | 'careers'
   | 'blog'
-  | 'contact';
+  | 'contact'
+  | 'product-gallery';
 
 export type SitePageCopy = {
   label: string;
@@ -72,7 +73,7 @@ export const PAGE_FALLBACKS: Record<WebsitePageId, SitePageCopy> = {
   facilities: {
     label: 'Manufacturing',
     title: 'Our Facilities',
-    subtitle: 'State-of-the-art equipment in Chikhali and Chakan, Pune — scalable from prototype to production.',
+    subtitle: 'Registered office in Chikhali, with manufacturing at Plant 1 Chakan MIDC and Plant 2 Bhosari MIDC, Pune.',
     body: '',
     bannerImage: '',
   },
@@ -97,6 +98,13 @@ export const PAGE_FALLBACKS: Record<WebsitePageId, SitePageCopy> = {
     body: '',
     bannerImage: '',
   },
+  'product-gallery': {
+    label: 'Archive',
+    title: 'Product Gallery',
+    subtitle: 'A curated view of bus body, railway, tooling, prototyping, and industrial work from our Pune plants.',
+    body: '',
+    bannerImage: '',
+  },
 };
 
 export const WEBSITE_PAGES: {
@@ -109,6 +117,7 @@ export const WEBSITE_PAGES: {
   { id: 'about', nav: 'About', publicPath: '/about', related: [{ label: 'Company settings', to: '/admin/settings' }, { label: 'Facilities records', to: '/admin/facilities' }] },
   { id: 'services', nav: 'Services', publicPath: '/services', related: [{ label: 'Service catalogue', to: '/admin/services' }] },
   { id: 'projects', nav: 'Projects', publicPath: '/projects', related: [{ label: 'Project records', to: '/admin/projects' }] },
+  { id: 'product-gallery', nav: 'Product gallery', publicPath: '/product-gallery', related: [{ label: 'Media library', to: '/admin/media' }] },
   { id: 'industries', nav: 'Industries', publicPath: '/industries', related: [{ label: 'Project records', to: '/admin/projects' }] },
   { id: 'case-studies', nav: 'Case studies', publicPath: '/case-studies', related: [{ label: 'Case study records', to: '/admin/case-studies' }] },
   { id: 'certifications', nav: 'Certifications', publicPath: '/certifications', related: [{ label: 'Certification records', to: '/admin/certifications' }] },

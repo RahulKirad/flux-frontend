@@ -3,22 +3,26 @@
 import { busImage, electricVehiclesImage, industrialEquipmentImage, railwaysImage, toolsDieImage, toolsAndDieImage, engineeringDesignImage } from '../assets/images';
 
 export const company = {
-  name: 'Flux Corp',
+  name: 'Flux Corporation',
   tagline: 'Engineering the Future of Mobility and Infrastructure',
   phone: '+91 75592 46461',
-  email: 'sales@fluxcorp.com',
-  website: 'www.fluxcorp.com',
+  email: 'Info@fluxcorporation.in',
+  emails: ['Info@fluxcorporation.in', 'Info.fluxcorp@gmail.com'],
+  website: 'www.fluxcorporation.in',
   locations: [
-    { name: 'Chikhali Facility', address: 'Plot No. 45, MIDC Chikhali, Pune - 411062, Maharashtra, India' },
-    { name: 'Chakan Facility', address: 'Survey No. 128, Chakan MIDC, Pune - 410501, Maharashtra, India' },
+    { name: 'Registered office', address: 'Chikhali, Pune' },
+    { name: 'Manufacturing facility — Plant 1', address: 'Chakan MIDC, Pune' },
+    { name: 'Manufacturing facility — Plant 2', address: 'Bhosari MIDC, Pune' },
   ],
+  addressSummary:
+    'Registered office — Chikhali, Pune. Manufacturing facility — Plant 1 Chakan MIDC, Pune; Plant 2 Bhosari MIDC, Pune.',
 };
 
 export const about = {
   overview: [
     'Flux Corp stands at the forefront of integrated engineering solutions, delivering a comprehensive approach that spans research and development, specification, prototyping, and the delivery of fully assembled parts. With a strong foundation in both technical expertise and creative design, Flux Corp is uniquely positioned to serve the evolving needs of the bus body manufacturing and railway parts sectors, both within India and globally.',
     'Our core philosophy is to provide clients with a seamless experience across the entire product lifecycle — from concept development and material selection through joining, inspection, and material implementation. By embracing a holistic methodology, Flux Corp ensures that every project benefits from rigorous engineering, innovative styling, and robust quality assurance.',
-    'Operating from advanced facilities in Chikhali and Chakan, Pune, Flux Corp leverages state-of-the-art equipment and a highly skilled workforce to deliver solutions that meet the highest standards of precision, durability, and regulatory compliance.',
+    'Operating from a registered office in Chikhali and manufacturing plants at Chakan MIDC and Bhosari MIDC, Pune, Flux Corporation leverages state-of-the-art equipment and a highly skilled workforce to deliver solutions that meet the highest standards of precision, durability, and regulatory compliance.',
   ],
   vision: 'To be the most trusted integrated engineering and manufacturing partner for bus body, railway, automotive, and industrial sectors globally — from initial consultation through series production.',
   mission: 'Deliver end-to-end engineering solutions and world-class manufacturing through advanced technology, regulatory compliance, and a customer-centric approach across the full product lifecycle.',
@@ -90,7 +94,7 @@ export const homeBannerSections = [
   },
   {
     label: 'Manufacturing Excellence',
-    title: 'Chikhali & Chakan Facilities',
+    title: 'Chakan MIDC & Bhosari MIDC Plants',
     description:
       'Our Pune facilities house CNC machining centers, 3D printing, vacuum forming, compression molding, model shops, and NDT/CMM inspection laboratories — scalable from prototype to full production.',
     image: 'https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=1200&q=80',
@@ -209,7 +213,7 @@ export const servicesContent: Record<
     intro:
       'Custom industrial component engineering and production for material handling, packaging systems, and special-purpose equipment across diverse industrial sectors.',
     detail:
-      'Flux Corp partners with OEMs, system integrators, and plant operators to deliver robust components engineered for high-cycle duty, tight tolerances, and reliable field performance. Our Chikhali and Chakan facilities combine CAD-driven design, CNC machining, composites forming, and assembly support — helping you move from concept validation to repeatable series production with shorter lead times.',
+      'Flux Corporation partners with OEMs, system integrators, and plant operators to deliver robust components engineered for high-cycle duty, tight tolerances, and reliable field performance. Our Plant 1 at Chakan MIDC and Plant 2 at Bhosari MIDC combine CAD-driven design, CNC machining, composites forming, and assembly support — helping you move from concept validation to repeatable series production with shorter lead times.',
     capabilities: [
       'Packaging trays, dunnage, and logistics handling solutions',
       'Conveyor, crane, and material handling sub-assemblies',
@@ -367,21 +371,30 @@ export const regulatoryStandards = ['AIS 153 — Bus body building norms', 'CMVR
 export const facilitiesContent = [
   {
     slug: 'chikhali',
-    name: 'Chikhali Manufacturing Facility',
-    location: 'MIDC Chikhali, Pune',
+    name: 'Registered office — Chikhali',
+    location: 'Chikhali, Pune',
     description:
-      'Primary manufacturing hub for bus body production, composite forming, and assembly operations with scalable production capacity.',
-    equipment: ['CNC machining centers', 'Vacuum forming & compression molding', 'FRP hand layup and spray-up', 'Assembly bays', 'NDT and CMM inspection labs'],
+      'Registered office of Flux Corporation, supporting operations, coordination, and client engagement in Pune.',
+    equipment: ['Operations & administration', 'Client coordination', 'Quality documentation'],
     image: 'https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=1000&q=80',
   },
   {
     slug: 'chakan',
-    name: 'Chakan Design & Prototyping Center',
+    name: 'Plant 1 — Chakan MIDC',
     location: 'Chakan MIDC, Pune',
     description:
-      'Advanced design, styling, and prototyping facility with model shop, 3D printing, and VR simulation capabilities.',
-    equipment: ['3D printing & additive manufacturing', 'Model shop — clay, FRP, MDF models', 'CAS and Class-A surfacing workstations', 'VR cockpit simulation', 'CNC prototype machining'],
+      'Manufacturing facility at Chakan MIDC for production, design support, and prototyping with scalable capacity.',
+    equipment: ['CNC machining centers', '3D printing & additive manufacturing', 'Model shop — clay, FRP, MDF models', 'CAS and Class-A surfacing workstations', 'CNC prototype machining'],
     image: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=1000&q=80',
+  },
+  {
+    slug: 'bhosari',
+    name: 'Plant 2 — Bhosari MIDC',
+    location: 'Bhosari MIDC, Pune',
+    description:
+      'Manufacturing facility at Bhosari MIDC for bus body, composite forming, and assembly operations.',
+    equipment: ['Vacuum forming & compression molding', 'FRP hand layup and spray-up', 'Assembly bays', 'NDT and CMM inspection labs'],
+    image: 'https://images.unsplash.com/photo-1565043589221-1a6fd9ae45c7?w=1000&q=80',
   },
 ];
 
@@ -419,7 +432,7 @@ export const commercialTerms = {
 };
 
 export const partners = [
-  'Ashok Leyland', 'Tata Motors', 'Indian Railways', 'Mahindra', 'Force Motors', 'Eicher', 'Pennar Industries', 'JBM Auto',
+  'Ashok Leyland', 'Tata Motors', 'Indian Railways', 'Mahindra', 'Force Motors', 'Volvo', 'Eicher', 'Pennar Industries', 'JBM Auto',
 ];
 
 export const blogArticles = [
@@ -448,7 +461,7 @@ export const blogArticles = [
 ];
 
 export const careersStatic = [
-  { slug: 'senior-design-engineer', title: 'Senior Design Engineer', department: 'Engineering Design', location: 'Chakan, Pune', type: 'Full-time', description: 'Lead concept-to-production engineering for automotive and railway interior/exterior programs.', requirements: 'B.E./B.Tech in Mechanical/Automotive, 5+ years CAD/CAE experience, CATIA/NX proficiency.' },
-  { slug: 'composite-process-engineer', title: 'Composite Process Engineer', department: 'Composites & Forming', location: 'Chikhali, Pune', type: 'Full-time', description: 'Develop FRP and vacuum forming processes, material qualification, and production tooling.', requirements: 'B.E./B.Tech in Materials/Mechanical, 3+ years composites manufacturing experience.' },
-  { slug: 'quality-inspection-specialist', title: 'Quality & Inspection Specialist', department: 'Quality Assurance', location: 'Chikhali, Pune', type: 'Full-time', description: 'Manage NDT, CMM inspection, and regulatory compliance testing across production lines.', requirements: 'Diploma/Degree in Quality/Mechanical, NDT Level II certification preferred, ISO audit experience.' },
+  { slug: 'senior-design-engineer', title: 'Senior Design Engineer', department: 'Engineering Design', location: 'Plant 1, Chakan MIDC, Pune', type: 'Full-time', description: 'Lead concept-to-production engineering for automotive and railway interior/exterior programs.', requirements: 'B.E./B.Tech in Mechanical/Automotive, 5+ years CAD/CAE experience, CATIA/NX proficiency.' },
+  { slug: 'composite-process-engineer', title: 'Composite Process Engineer', department: 'Composites & Forming', location: 'Plant 2, Bhosari MIDC, Pune', type: 'Full-time', description: 'Develop FRP and vacuum forming processes, material qualification, and production tooling.', requirements: 'B.E./B.Tech in Materials/Mechanical, 3+ years composites manufacturing experience.' },
+  { slug: 'quality-inspection-specialist', title: 'Quality & Inspection Specialist', department: 'Quality Assurance', location: 'Plant 1, Chakan MIDC, Pune', type: 'Full-time', description: 'Manage NDT, CMM inspection, and regulatory compliance testing across production lines.', requirements: 'Diploma/Degree in Quality/Mechanical, NDT Level II certification preferred, ISO audit experience.' },
 ];

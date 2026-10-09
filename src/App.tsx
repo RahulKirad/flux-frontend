@@ -7,6 +7,7 @@ import HomePage from './pages/HomePage';
 import AboutPage from './pages/AboutPage';
 import ServicesPage from './pages/ServicesPage';
 import ProjectsPage, { IndustriesPage } from './pages/ProjectsPage';
+import ProductGalleryPage from './pages/ProductGalleryPage';
 import {
   CaseStudiesPage, BlogPage, CertificationsPage,
   FacilitiesPage, CareersPage, ContactPage,
@@ -50,6 +51,7 @@ export default function App() {
               <Route path="industries/:slug" element={<IndustriesPage />} />
               <Route path="projects" element={<ProjectsPage />} />
               <Route path="projects/:slug" element={<ProjectsPage />} />
+              <Route path="product-gallery" element={<ProductGalleryPage />} />
               <Route path="case-studies" element={<CaseStudiesPage />} />
               <Route path="case-studies/:slug" element={<CaseStudiesPage />} />
               <Route path="certifications" element={<CertificationsPage />} />
